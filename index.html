@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio & Catalogue 3D - Structure Japandi</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <a href="#" class="site-logo" aria-label="Logo du site">
+        <img src="images/logo.png" alt="Logo du site">
+    </a>
+
+    <button id="menu-toggle">Menu</button>
+
+    <nav id="sidebar">
+        <ul class="nav-links">
+            <li><a href="#" onclick="showView('view-home')">Accueil</a></li>
+            <li><a href="#" onclick="showView('view-projets-grid')">Projets</a></li>
+            <li><a href="#" onclick="showView('view-catalogue')">Catalogue</a></li>
+            <li><a href="#" onclick="scrollToContact()">Contact</a></li>
+        </ul>
+
+        <div class="personal-info">
+            <strong>Profil Studio</strong><br><br>
+            Conception spatiale et modélisation tridimensionnelle. Ce portfolio rassemble des explorations
+            architecturales guidées par la recherche du minimalisme, de la lumière naturelle et de la fluidité
+            structurelle.
+        </div>
+    </nav>
+
+    <main id="main-content">
+
+        <div id="view-home" class="page-view">
+            <section class="home-feature-image" aria-label="Image principale du portfolio">
+                <img src="images/Drawing21.png" alt="MIDO HOUSE, image principale du portfolio">
+            </section>
+
+            <section class="carousels-wrapper">
+
+                <div class="carousel-column" id="projets-carousel">
+                    <div class="carousel-header">Projets à la une</div>
+                    <div class="carousel-slides">
+                        <div class="carousel-item">
+                            <div class="img-frame"><img src="images/kaza_kaz_cover.png" alt="KAZA KAZ"></div>
+                            <div class="item-caption">
+                                <span class="caption-text">KAZA KAZ</span>
+                                <button class="view-project-btn"
+                                    onclick="showView('project-kaza-kaz')">Découvrir</button>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="img-frame"><img src="images/lart_du_lien_cover.jpg" alt="L'ART DU LIEN"></div>
+                            <div class="item-caption">
+                                <span class="caption-text">L'ART DU LIEN</span>
+                                <button class="view-project-btn"
+                                    onclick="showView('project-lart-du-lien')">Découvrir</button>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="img-frame"><img src="images/dalhia_carousel.jpg" alt="DALHIA"></div>
+                            <div class="item-caption">
+                                <span class="caption-text">DALHIA</span>
+                                <button class="view-project-btn" onclick="showView('project-dalhia')">Découvrir</button>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="img-frame"><img src="images/kakuten_museum_cover.jpg" alt="KAKUTEN MUSEUM">
+                            </div>
+                            <div class="item-caption">
+                                <span class="caption-text">KAKUTEN MUSEUM</span>
+                                <button class="view-project-btn"
+                                    onclick="showView('project-kakuten-museum')">Découvrir</button>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="img-frame"><img src="images/behind_doors_cover.png" alt="BEHIND DOORS"></div>
+                            <div class="item-caption">
+                                <span class="caption-text">BEHIND DOORS</span>
+                                <button class="view-project-btn"
+                                    onclick="showView('project-behind-doors')">Découvrir</button>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="img-frame"><img src="images/shamal_house_cover.jpg" alt="SHAMAL HOUSE"></div>
+                            <div class="item-caption">
+                                <span class="caption-text">SHAMAL HOUSE</span>
+                                <button class="view-project-btn"
+                                    onclick="showView('project-shamal-house')">Découvrir</button>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="img-frame"><img src="images/mido_house_cover.jpg" alt="MIDO HOUSE"></div>
+                            <div class="item-caption">
+                                <span class="caption-text">MIDO HOUSE</span>
+                                <button class="view-project-btn"
+                                    onclick="showView('project-mido-house')">Découvrir</button>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="img-frame"><img src="images/season_fall_carousel.jpg" alt="SEASON FALL"></div>
+                            <div class="item-caption">
+                                <span class="caption-text">SEASON FALL</span>
+                                <button class="view-project-btn"
+                                    onclick="showView('project-season-fall')">Découvrir</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-arrow prev" onclick="moveSlide('projets-carousel', -1)">&#10094;</button>
+                    <button class="carousel-arrow next" onclick="moveSlide('projets-carousel', 1)">&#10095;</button>
+                </div>
+
+                <div class="carousel-column" id="catalogue-carousel">
+                    <div class="carousel-header">Modèles 3D Récents</div>
+                    <div class="carousel-slides">
+                        <div class="carousel-item">
+                            <div class="img-frame"><img src="images/catalogue_item_1.png"
+                                    alt="Structure Modulaire Asset"></div>
+                            <div class="item-caption">
+                                <span class="caption-text">Structure Modulaire - Asset</span>
+                                <button class="view-project-btn" onclick="showView('asset-structure-modulaire')">Voir
+                                    l'asset</button>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="img-frame"><img src="images/catalogue_item_2.png" alt="Mobilier Intérieur Pack">
+                            </div>
+                            <div class="item-caption">
+                                <span class="caption-text">Mobilier Intérieur - Pack</span>
+                                <button class="view-project-btn" onclick="showView('asset-mobilier-interieur')">Voir
+                                    l'asset</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-arrow prev" onclick="moveSlide('catalogue-carousel', -1)">&#10094;</button>
+                    <button class="carousel-arrow next" onclick="moveSlide('catalogue-carousel', 1)">&#10095;</button>
+                </div>
+
+            </section>
+        </div>
+
+
+        <div id="view-projets-grid" class="page-view" style="display: none;">
+            <h1 class="page-title">Index des projets</h1>
+            <div class="projects-grid">
+
+                <div class="grid-item" onclick="showView('project-kaza-kaz')">
+                    <div class="grid-img-container"><img src="images/kaza_kaz_cover1.png" alt="KAZA KAZ"></div>
+                    <div class="grid-item-title">KAZA KAZ</div>
+                    <div class="grid-item-meta">Conception bioclimatique</div>
+                </div>
+
+                <div class="grid-item" onclick="showView('project-dalhia')">
+                    <div class="grid-img-container"><img src="images/dalhia_cover.jpg" alt="DALHIA"></div>
+                    <div class="grid-item-title">DALHIA</div>
+                    <div class="grid-item-meta">Design mobilier</div>
+                </div>
+
+                <div class="grid-item" onclick="showView('project-season-fall')">
+                    <div class="grid-img-container"><img src="images/season_fall_cover.jpg" alt="SEASON FALL"></div>
+                    <div class="grid-item-title">SEASON FALL</div>
+                    <div class="grid-item-meta">Aménagement intérieur/extérieur</div>
+                </div>
+
+                <div class="grid-item" onclick="showView('project-behind-doors')">
+                    <div class="grid-img-container"><img src="images/behind_doors_cover.png" alt="BEHIND DOORS"></div>
+                    <div class="grid-item-title">BEHIND DOORS</div>
+                    <div class="grid-item-meta">Conception d'espace</div>
+                </div>
+
+                <div class="grid-item" onclick="showView('project-kakuten-museum')">
+                    <div class="grid-img-container"><img src="images/kakuten_museum_cover.jpg" alt="KAKUTEN MUSEUM">
+                    </div>
+                    <div class="grid-item-title">KAKUTEN MUSEUM</div>
+                    <div class="grid-item-meta">Architecture publique</div>
+                </div>
+
+                <div class="grid-item" onclick="showView('project-mido-house')">
+                    <div class="grid-img-container"><img src="images/mido_house_cover.jpg" alt="MIDO HOUSE"></div>
+                    <div class="grid-item-title">MIDO HOUSE</div>
+                    <div class="grid-item-meta">Micro-architecture rurale</div>
+                </div>
+
+                <div class="grid-item" onclick="showView('project-lart-du-lien')">
+                    <div class="grid-img-container"><img src="images/lart_du_lien_cover.jpg" alt="L'ART DU LIEN"></div>
+                    <div class="grid-item-title">L'ART DU LIEN</div>
+                    <div class="grid-item-meta">Concours écoresponsable</div>
+                </div>
+
+                <div class="grid-item" onclick="showView('project-shamal-house')">
+                    <div class="grid-img-container"><img src="images/shamal_house_cover.jpg" alt="SHAMAL HOUSE"></div>
+                    <div class="grid-item-title">SHAMAL HOUSE</div>
+                    <div class="grid-item-meta">Villa côtière</div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="view-catalogue" class="page-view" style="display: none;">
+            <h1 class="page-title">Catalogue d'Assets 3D</h1>
+            <div class="projects-grid">
+                <div class="grid-item" onclick="showView('asset-structure-modulaire')">
+                    <div class="grid-img-container"><img src="images/catalogue_item_1.png"
+                            alt="Structure Modulaire Asset"></div>
+                    <div class="grid-item-title">Structure Modulaire - Asset</div>
+                    <div class="grid-item-meta">Modèle 3D prêt à l'emploi pour visualisation archi et motion design.
+                    </div>
+                </div>
+                <div class="grid-item" onclick="showView('asset-mobilier-interieur')">
+                    <div class="grid-img-container"><img src="images/Render.png" alt="Mobilier Intérieur Pack"></div>
+                    <div class="grid-item-title">Mobilier Intérieur - Pack</div>
+                    <div class="grid-item-meta">Pack d'assets 3D modulaires pour décoration et aménagement intérieur.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="asset-structure-modulaire" class="page-view" style="display: none;">
+            <div class="project-detail-wrapper">
+                <button class="back-button" onclick="showView('view-catalogue')">&larr; Retour au catalogue</button>
+                <div class="detail-header-img"><img src="images/catalogue_item_1.png" alt="Structure Modulaire Asset">
+                </div>
+                <div class="detail-body">
+                    <div class="detail-info-panel">
+                        <h1 class="detail-title">Structure Modulaire - Asset</h1>
+                        <div class="detail-meta-tags">Asset 3D téléchargeable &bull; Format FBX / OBJ / GLB</div>
+                        <p class="detail-description">Prototype de structure modulaire architecturale destiné aux
+                            présentations, rendus et simulations 3D. Ce modèle est optimisé pour la performance, tout en
+                            proposant des détails réalistes sur la structure, les joints et les surfaces texturées.</p>
+                        <ul class="asset-meta-list">
+                            <li>Format source : .glb / .fbx / .obj</li>
+                            <li>Polygones : 32 000 tris</li>
+                            <li>Textures PBR incluses : diffuse, roughness, normal</li>
+                            <li>Orientation : alignée sur les axes X/Y</li>
+                            <li>Licence : usage perso et présentation commerciale</li>
+                        </ul>
+                        <a class="download-btn" href="#">Télécharger le fichier 3D (placeholder)</a>
+                    </div>
+                    <div class="detail-gallery inline">
+                        <div class="img-frame"><img src="images/catalogue_item_1.png" alt="Preview Structure Modulaire">
+                        </div>
+                        <div class="img-frame"><img src="images/catalogue_item_1.png" alt="Preview Structure Modulaire">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="asset-mobilier-interieur" class="page-view" style="display: none;">
+            <div class="project-detail-wrapper">
+                <button class="back-button" onclick="showView('view-catalogue')">&larr; Retour au catalogue</button>
+
+                <!-- E-commerce Layout: 3D Media Viewer left, Info right -->
+                <div class="ecommerce-layout">
+                    <div class="ecommerce-media-column">
+                        <div class="media-viewer-container" id="furniture-3d-container">
+                            <!-- Onglets de sélection de mode -->
+                            <div class="viewer-tabs">
+                                <button type="button" class="viewer-tab-btn active" data-mode="3d"
+                                    onclick="switchMediaMode('3d')">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path
+                                            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                                        </path>
+                                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                                    </svg>
+                                    Vue 3D Interactive
+                                </button>
+                                <button type="button" class="viewer-tab-btn" data-mode="image"
+                                    onclick="switchMediaMode('image')">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="0" ry="0"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                    Photo Rendu
+                                </button>
+                            </div>
+
+                            <!-- Viewport 3D Interactif (Format Carré 1:1) -->
+                            <div class="viewer-3d-viewport active" id="viewer-3d-viewport">
+                                <div id="three-canvas-wrapper" class="three-canvas-wrapper"></div>
+
+                                <!-- Indicateur de chargement -->
+                                <div class="viewer-loading-overlay" id="viewer-loading" style="display: none;">
+                                    <div class="viewer-spinner"></div>
+                                    <span class="viewer-loading-text">Chargement du modèle 3D...</span>
+                                </div>
+
+                                <!-- Barre d'outils 3D flottante -->
+                                <div class="viewer-toolbar">
+                                    <button type="button" class="viewer-tool-btn" id="btn-rotate"
+                                        title="Rotation automatique 360°" onclick="toggle3DRotation()">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+                                        </svg>
+                                    </button>
+                                    <button type="button" class="viewer-tool-btn" id="btn-wireframe"
+                                        title="Mode Filaire (Wireframe)" onclick="toggle3DWireframe()">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <rect x="3" y="3" width="18" height="18" />
+                                            <line x1="3" y1="9" x2="21" y2="9" />
+                                            <line x1="3" y1="15" x2="21" y2="15" />
+                                            <line x1="9" y1="3" x2="9" y2="21" />
+                                            <line x1="15" y1="3" x2="15" y2="21" />
+                                        </svg>
+                                    </button>
+                                    <button type="button" class="viewer-tool-btn" id="btn-reset-cam"
+                                        title="Recentrer la caméra" onclick="reset3DCamera()">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10" />
+                                            <circle cx="12" cy="12" r="3" />
+                                            <line x1="12" y1="2" x2="12" y2="6" />
+                                            <line x1="12" y1="18" x2="12" y2="22" />
+                                            <line x1="2" y1="12" x2="6" y2="12" />
+                                            <line x1="18" y1="12" x2="22" y2="12" />
+                                        </svg>
+                                    </button>
+                                    <button type="button" class="viewer-tool-btn" id="btn-fullscreen"
+                                        title="Plein écran" onclick="toggle3DFullscreen()">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <polyline points="15 3 21 3 21 9" />
+                                            <polyline points="9 21 3 21 3 15" />
+                                            <polyline points="21 14 21 20 15 20" />
+                                            <polyline points="3 10 3 4 9 4" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <!-- Badge d'information du modèle actif -->
+                                <div class="viewer-status-badge" id="viewer-status-badge">
+                                    <span class="status-dot"></span>
+                                    <span id="viewer-model-name">Modèle 3D Actif</span>
+                                </div>
+                            </div>
+
+                            <!-- Viewport Image Fixe (Format Carré 1:1) -->
+                            <div class="viewer-image-viewport" id="viewer-image-viewport">
+                                <img src="images/Render.png" alt="Mobilier Intérieur Pack">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ecommerce-info">
+                        <h1 class="detail-title">Palette en bois</h1>
+                        <div class="detail-meta-tags">Asset 3D interactif &bull; Format GLB / OBJ / FBX / BLEND</div>
+                        <p class="ecommerce-short-desc">Modèle 3D de palette en bois (Palette unique), idéal pour
+                            l'ameublement industriel, la décoration intérieure et la visualisation architecturale.</p>
+
+                        <div class="ecommerce-section-title">Caractéristiques techniques</div>
+                        <ul class="asset-meta-list">
+                            <li>Formats disponibles : GLB, OBJ, FBX, fichier Blender (.blend)</li>
+                            <li>Polygones : 533 536 tris (polygones)</li>
+                            <li>Structure : Palette fixe (toute la géométrie est liée)</li>
+                            <li>Textures PBR incluses : albedo, roughness, metalness</li>
+                            <li>Licence : usage perso et présentations professionnelles</li>
+                        </ul>
+                        <a class="download-btn" href="models/Palette.glb" download="Palette.glb">Télécharger
+                            Palette.glb</a>
+                    </div>
+                </div>
+
+                <!-- Full Description -->
+                <div class="detail-info-panel" style="max-width: 100%; margin-bottom: 40px;">
+                    <h2 class="ecommerce-section-title">Description détaillée</h2>
+                    <p class="detail-description">Ce pack de mobilier intérieur a été conçu pour offrir une solution
+                        complète aux architectes et designers travaillant sur des projets de visualisation 3D. Chaque
+                        élément est optimisé pour les rendus temps réel et les moteurs de jeu (Unreal, Unity), tout en
+                        conservant un niveau de détail photoréaliste. Les modèles sont modulaires et peuvent être
+                        combinés de multiples façons pour créer des aménagements uniques. Les textures PBR incluses
+                        garantissent une apparence cohérente sous différents éclairages.</p>
+                </div>
+
+                <!-- 16:9 Images at Bottom -->
+                <div class="detail-fullwidth-frame"><img src="images/catalogue_item_2.jpg"
+                        alt="Mobilier Insertion 3D 1"></div>
+                <div class="detail-fullwidth-frame"><img src="images/catalogue_item_2.jpg"
+                        alt="Mobilier Insertion 3D 2"></div>
+            </div>
+        </div>
+
+        <div id="project-kaza-kaz" class="page-view" style="display: none;">
+            <div class="project-detail-wrapper">
+                <button class="back-button" onclick="showView('view-projets-grid')">&larr; Retour à l'index</button>
+                <div class="detail-header-img"><img src="images/Rsss.jpg" alt="KAZA KAZ"></div>
+
+                <div class="kaza-editorial-layout">
+                    <div class="kaza-story-row">
+                        <div class="kaza-story-copy">
+                            <div class="kaza-story-text">
+                                <div class="kaza-label">PFE Bachelor 3 ESDAC</div>
+                                <h1 class="detail-title" style="margin-bottom: 12px;">KAZA KAZ</h1>
+                                <div class="detail-meta-tags" style="margin-bottom: 14px;">Conception bioclimatique
+                                    &bull; Structure modulaire</div>
+                                <p class="kaza-text-intro">La Martinique est une île française des Caraïbes, située dans
+                                    l’archipel des Petites Antilles, entre la Dominique et Sainte‑Lucie. C’est une
+                                    collectivité territoriale unique et une région ultrapériphérique de l’Union
+                                    européenne. L’éruption de la montagne Pelée en 1902 sur l’île antillaise de la
+                                    Martinique a été l’un des événements volcaniques les plus meurtriers de l’histoire
+                                    moderne. Dans les jours précédant l’éruption, un phénomène discret : les «
+                                    déménageurs martiniquais ». L’exode volcanique désigne la fuite massive des
+                                    habitants de Saint‑Pierre et des communes voisines en 1902, contraints d’abandonner
+                                    la région face à l’éruption dévastatrice de la Montagne Pelée. Suite à cet événement
+                                    traumatisant pour la population, la Martinique a subi un mouvement progressif forcé
+                                    vers le sud de l’île.</p>
+                            </div>
+                            <p class="kaza-text-intro kaza-additional-text">Ce projet m'est cher et personnel, il
+                                représente une opportunité de concrétiser mes aspirations et de contribuer à
+                                l'amélioration de notre environnement. Une possibilité de me rapprocher de ma terre
+                                natale à plus de 8000 km.</p>
+                        </div>
+                        <div class="kaza-story-media">
+                            <img src="images/KAZA KAZ RES1.png" alt="KAZA KAZ Visuel principal">
+                        </div>
+                    </div>
+
+                    <div class="kaza-story-row reverse">
+                        <div class="kaza-story-media">
+                            <img src="images/fsj2020may_06_img01.jpg" alt="KAZA KAZ Visuel secondaire">
+                        </div>
+                        <div class="kaza-story-copy">
+                            <div class="kaza-story-text" style="min-height: 0; width: 100%;">
+                                <h2 class="detail-title"
+                                    style="font-size: 24px; letter-spacing: 2px; margin-bottom: 12px;">Exode volcanique
+                                </h2>
+                                <p class="kaza-text-intro">L’exode volcanique désigne la fuite massive des habitants de
+                                    Saint‑Pierre et des communes voisines en 1902, contraints d’abandonner la région
+                                    face à l’éruption dévastatrice de la Montagne Pelée.
+                                    Suite à cet événement traumatisant pour la population, la Martinique a subi un
+                                    mouvement progressif forcé vers le sud de l’île.
+
+                                    Basse-Pointe se situe au nord de la Martinique, face à l’Atlantique, avec une vue
+                                    dominante sur la montagne Pelée. Ses terres très fertiles ont longtemps été
+                                    consacrées à la canne à sucre.
+
+                                    Après l’abolition de l’esclavage, une importante communauté indienne s’y installe,
+                                    ce qui explique la présence de deux temples hindous.</p>
+                            </div>
+                            <p class="kaza-text-intro kaza-additional-text">Les conteneurs maritimes, construits en
+                                acier renforcé, affichent un poids à vide d’environ 2,2 tonnes pour un de 6m et
+                                3,8 tonnes pour un de 12m, tout en pouvant supporter une charge utile dépassant 28 à
+                                30 tonnes selon les modèles.
+
+                                Cette robustesse leur permet de transporter en toute sécurité des marchandises lourdes
+                                sur de longues distances, malgré les manipulations répétées et les conditions maritimes
+                                exigeantes.
+                                Grâce à cette capacité de charge élevée et standardisée, ils restent l’un des piliers
+                                techniques du transport mondial.</p>
+                        </div>
+                    </div>
+
+                    <div class="kaza-story-row">
+                        <div class="kaza-story-text">
+                            <h2 class="detail-title" style="font-size: 24px; letter-spacing: 2px; margin-bottom: 12px;">
+                                Habiter le climat</h2>
+                            <p class="kaza-text-intro">La conception du projet s’appuie sur une relation directe et
+                                exigeante avec le climat tropical humide de Basse-Pointe. L’implantation et
+                                l'orientation des modules ont été précisément calibrées selon l’axe des alizés dominants
+                                pour capter les brises marines et instaurer une ventilation naturelle traversante
+                                permanente, garantissant un confort thermique passif sans recours systématique à la
+                                climatisation.</p>
+                            <p class="kaza-text-intro">Pour répondre aux fortes intensités d'ensoleillement et aux
+                                épisodes de pluies torrentielles, l'architecture intègre de larges débords de toiture et
+                                des coursives périphériques protectrices. Les façades s'ouvrent par des persiennes et
+                                des claustras en bois local qui filtrent la lumière aveuglante tout en maintenant une
+                                circulation d'air fluide et ininterrompue au cœur des espaces de vie.</p>
+                            <p class="kaza-text-intro">Surélevée sur des plots de fondation pour s'affranchir de
+                                l'humidité du sol et préserver la perméabilité du terrain, la structure dialogue en
+                                continu avec son environnement. Les limites entre intérieur et extérieur s’estompent,
+                                créant un habitat respirant, robuste et durablement ancré dans le paysage face à
+                                l’Atlantique et à la montagne Pelée.</p>
+                        </div>
+                        <div class="kaza-story-media">
+                            <img src="images/Plan-des-modules.png" alt="KAZA KAZ Organisation climatique">
+                        </div>
+                    </div>
+
+                    <div class="kaza-story-row reverse">
+                        <div class="kaza-story-media">
+                            <img src="images/Plan-explicatif.png" alt="KAZA KAZ Assemblage constructif">
+                        </div>
+                        <div class="kaza-story-text">
+                            <h2 class="detail-title" style="font-size: 24px; letter-spacing: 2px; margin-bottom: 12px;">
+                                Assemblage constructif</h2>
+                            <p class="kaza-text-intro">Chaque élément du projet est pensé comme une pièce d’un système
+                                constructif lisible, démontable et évolutif. L’assemblage repose sur une trame régulière
+                                qui organise les dimensions des modules, la position des appuis et le passage des
+                                réseaux. Cette répétition permet de fabriquer les composants en atelier avec précision,
+                                de limiter les découpes sur site et de réduire les erreurs lors du montage.</p>
+                            <p class="kaza-text-intro">Les conteneurs constituent la structure de base du projet. Leurs
+                                dimensions standardisées facilitent le transport et la mise en place progressive des
+                                volumes. Ils sont installés sur des fondations ponctuelles composées de pieux et de
+                                poutres de liaison, afin de limiter les mouvements de terre, de s’adapter aux
+                                contraintes du sol et de laisser le bâtiment légèrement décollé du terrain. Les
+                                connexions mécaniques, les platines et les éléments de liaison restent accessibles : un
+                                module, une façade ou une pièce endommagée peut ainsi être remplacé sans remettre en
+                                cause l’ensemble de la structure.</p>
+                            <p class="kaza-text-intro">Le chantier peut être réalisé par phases, depuis la préparation
+                                des fondations et des réseaux jusqu’à la pose des planchers, des cloisons, des
+                                menuiseries et des équipements. Cette organisation réduit la durée d’intervention sur
+                                site et permet d’ajouter plus tard une chambre, un espace de vie ou une terrasse
+                                couverte. Le projet devient ainsi une architecture adaptable, qui limite les pertes de
+                                matériaux, facilite la maintenance et accompagne l’évolution des usages dans le temps.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="kaza-story-row materials-row">
+                        <div class="kaza-story-text" style="min-height: 0; width: 100%; height: 100%;">
+                            <h2 class="detail-title" style="font-size: 24px; letter-spacing: 2px; margin-bottom: 12px;">
+                                Matériaux</h2>
+                            <p class="kaza-text-intro">Le courbaril est un bois martiniquais dense et durable, offrant
+                                une très bonne résistance mécanique et une stabilité idéale pour les structures et
+                                menuiseries exposées au climat tropical. Le simarouba est un bois léger et naturellement
+                                imputrescible, apprécié pour sa bonne tenue en milieu humide et sa capacité à réduire
+                                l’impact environnemental grâce à une ressource locale. Le métal nervuré du conteneur,
+                                laissé apparent en intérieur, apporte une esthétique industrielle brute tout en gardant
+                                sa robustesse structurelle et une forte identité matérielle au projet. Les fondations
+                                sont réalisées sur pieux béton reliés par des poutres en béton. Les menuiseries en métal
+                                renforcent l’identité industrielle du projet en offrant une bonne résistance aux
+                                conditions climatiques martiniquaises.</p>
+                            <div class="kaza-material-links">
+                                <a class="kaza-material-link" href="images/MAT1.png" aria-label="Image MAT1">
+                                    <img src="images/MAT1.png" alt="MAT1">
+                                </a>
+                                <a class="kaza-material-link" href="images/MAT2.png" aria-label="Image MAT2">
+                                    <img src="images/MAT2.png" alt="MAT2">
+                                </a>
+                                <a class="kaza-material-link" href="images/MAT3.png" aria-label="Image MAT3">
+                                    <img src="images/MAT3.png" alt="MAT3">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="kaza-story-media" style="height: 100%; min-height: 100%;">
+                            <img src="images/t.png" alt="KAZA KAZ matériaux"
+                                style="width: 100%; height: 100%; object-fit: cover; object-position: center 58%; transform: translateY(6px);">
+                        </div>
+                    </div>
+
+                    <div class="kaza-mosaic">
+                        <div class="kaza-mosaic-item medium"><img src="images/Détails-techniques.png"
+                                alt="KAZA KAZ visuel 1"></div>
+                        <div class="kaza-mosaic-item"><img src="images/lkjhgfvcghjkop.png" alt="KAZA KAZ visuel 2">
+                        </div>
+                        <div class="kaza-mosaic-item small"><img src="images/Détails-techniques - Copie.png"
+                                alt="KAZA KAZ visuel 3"></div>
+                    </div>
+
+                    <div class="detail-header-img" style="margin-top: 28px; margin-bottom: 0;"><img
+                            src="images/Plan-cadastrale.jpg" alt="KAZA KAZ fin de projet"></div>
+                    <div class="detail-header-img" style="margin-top: 18px; margin-bottom: 0;"><img
+                            src="images/kaza_kaz_banniere.jpg" alt="KAZA KAZ fin de projet 2"></div>
+                    <section class="final-image-block" aria-label="Image finale du projet KAZA KAZ">
+                        <img src="images/Plan - Copie.png" alt="Projet KAZA KAZ dans un paysage tropical">
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <div id="project-dalhia" class="page-view" style="display: none;">
+            <div class="project-detail-wrapper">
+                <button class="back-button" onclick="showView('view-projets-grid')">&larr; Retour à l'index</button>
+                <div class="detail-header-img"><img src="images/dalhia_banniere.jpg" alt="DALHIA"></div>
+
+                <div class="dalhia-editorial-layout">
+                    <section class="dalhia-intro-block">
+                        <span class="dalhia-label">01 / Concept</span>
+                        <h1 class="detail-title">DALHIA</h1>
+                        <div class="detail-meta-tags">Conception libre &bull; design d'escalier</div>
+                        <p>Dalhia prend racine dans la forme d’une fleur, transformant l’escalier en une composition à
+                            la fois organique et architecturale. Vu du dessus, la structure rayonnante autour du fût
+                            central évoque la régularité des pétales d’une dahlia, avec un cœur dense et des segments
+                            périphériques soigneusement ordonnés. Les marches s’étalent comme des pétales en spirale,
+                            tandis que la bande extérieure du garde-corps forme une couronne protectrice, comparable aux
+                            couches externes d’une fleur en pleine floraison. Cette analogie renforce la cohérence
+                            esthétique du projet en unissant fonction structurelle et expression formelle. L’escalier
+                            devient ainsi une floraison architecturale, qui s’élève avec élégance, équilibre et une
+                            forte identité visuelle.</p>
+                    </section>
+
+                    <section class="dalhia-large-image" aria-label="Grand visuel DALHIA">
+                        <img src="images/dalhia_cover.jpg" alt="DALHIA vue d'ensemble">
+                    </section>
+
+                    <section class="dalhia-a1-images" aria-label="Planches A1 du projet DALHIA">
+                        <div class="dalhia-image-block a1"><img src="images/PF1.jpg" alt="DALHIA Planche A1 - Visuel 1">
+                        </div>
+                        <div class="dalhia-image-block a1"><img src="images/PF2.jpg" alt="DALHIA Planche A1 - Visuel 2">
+                        </div>
+                    </section>
+
+                    <section class="dalhia-text-image">
+                        <div class="dalhia-text-block">
+                            <span class="dalhia-label">02 / Structure &amp; Détails techniques</span>
+                            <h2>Une géométrie autoportante</h2>
+                            <p>L’escalier repose sur un fût central en acier tubulaire de 200 mm de diamètre et 12 mm
+                                d’épaisseur. Ce fût assure la reprise des efforts de torsion, de compression et de
+                                cisaillement générés par les marches et les charges d’usage. Sa section et son
+                                élancement ont été choisis pour garantir une stabilité optimale sans risque de
+                                flambement, même en cas de sollicitation simultanée de plusieurs marches.</p>
+                            <p>Chaque marche est conçue comme un caisson métallique de 1 cm d’épaisseur, avec un volume
+                                d’environ 7000 cm³. Ce format permet d’obtenir une rigidité suffisante pour limiter la
+                                flèche sous charge à moins de 3 mm, tout en conservant une masse modérée (≈ 55 kg). Des
+                                raidisseurs internes sont intégrés au pied de la marche pour renforcer l’encastrement et
+                                assurer une transmission efficace des efforts vers le fût.</p>
+                            <p>Le fût est fixé au sol et au plafond par des platines épaisses équipées de goussets et de
+                                chevilles mécaniques. Ces ancrages sont dimensionnés pour reprendre les efforts cumulés
+                                de torsion (jusqu’à 8 kN·m), de cisaillement vertical (≈ 15 kN), et les éventuels
+                                moments d’excentration. L’ensemble assure une stabilité durable et sécurisée de
+                                l’escalier dans son environnement.</p>
+                        </div>
+                        <div class="dalhia-image-block"><img src="images/TF1.jpg" alt="DALHIA détail constructif"></div>
+                    </section>
+
+                    <div class="season-fall-socials">
+                        <div class="season-fall-video-card">
+                            <div class="video-platform"><span>TikTok</span><span>Reel</span></div>
+                            <div class="tiktok-embed-wrapper">
+                                <blockquote class="tiktok-embed"
+                                    cite="https://www.tiktok.com/@ev.design.lab/video/7582384628065914134"
+                                    data-video-id="7582384628065914134">
+                                    <section>
+                                        <a target="_blank" rel="noopener noreferrer" title="@ev.design.lab"
+                                            href="https://www.tiktok.com/@ev.design.lab?refer=embed">@ev.design.lab</a>
+                                        The DAHLIA staircase A staircase that blooms 🌸 Inspired by petals, shaped in
+                                        steel, and designed to bring both beauty and stability.
+                                        <a title="spiralstaircase" target="_blank"
+                                            href="https://www.tiktok.com/tag/spiralstaircase?refer=embed">#SpiralStaircase</a>
+                                        <a title="designstudent" target="_blank"
+                                            href="https://www.tiktok.com/tag/designstudent?refer=embed">#DesignStudent</a>
+                                        <a title="creativearchitecture" target="_blank"
+                                            href="https://www.tiktok.com/tag/creativearchitecture?refer=embed">#CreativeArchitecture</a>
+                                        <a title="inspiration" target="_blank"
+                                            href="https://www.tiktok.com/tag/inspiration?refer=embed">#Inspiration</a>
+                                    </section>
+                                </blockquote>
+                            </div>
+                        </div>
+                        <div class="season-fall-video-card">
+                            <div class="video-platform"><span>Instagram</span><span>Reel</span></div>
+                            <div class="instagram-embed-wrapper">
+                                <blockquote class="instagram-media" data-instgrm-captioned
+                                    data-instgrm-permalink="https://www.instagram.com/reel/DSGjUHGADge/?utm_source=ig_embed&amp;utm_campaign=loading"
+                                    data-instgrm-version="14">
+                                    <a href="https://www.instagram.com/reel/DSGjUHGADge/?utm_source=ig_embed&amp;utm_campaign=loading"
+                                        target="_blank" rel="noopener noreferrer">Voir cette publication sur
+                                        Instagram</a>
+                                </blockquote>
+                            </div>
+                        </div>
+                        <div class="season-fall-video-card">
+                            <div class="video-platform"><span>YouTube</span><span>Short</span></div>
+                            <div class="youtube-embed-wrapper">
+                                <iframe width="356" height="634" src="https://www.youtube.com/embed/DBUM9uzb1Qs"
+                                    title="The DAHLIA staircase"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="project-season-fall" class="page-view" style="display: none;">
+            <div class="project-detail-wrapper">
+                <button class="back-button" onclick="showView('view-projets-grid')">&larr; Retour à l'index</button>
+                <div class="detail-header-img"><img src="images/Image1_000.jpg" alt="SEASON FALL"></div>
+
+                <div class="season-fall-layout">
+                    <div class="season-fall-copy-column">
+                        <div class="season-fall-text-block">
+                            <span class="season-label">Canada / Polar</span>
+                            <h1 class="detail-title" style="margin-bottom: 0;">SEASON FALL</h1>
+                            <div class="detail-meta-tags" style="margin-top: 10px; margin-bottom: 8px;">Direction
+                                artistique &bull; Maison d'édition &bull; Identité visuelle</div>
+                            <p>Ce projet a été réalisé lors de ma deuxième année d’architecture.
+                                L’objectif était de concevoir un espace sur le toit d’un immeuble résidentiel situé au
+                                Canada, où l’hiver et la neige sont des facteurs environnementaux majeurs.
+
+                                Le toit présente des ouvertures intentionnelles dans la structure qui permettent aux
+                                chutes de neige naturelles de pénétrer dans des zones spécifiques, créant ainsi un lien
+                                visuel et sensoriel avec la nature.
+
+                                Ces zones ouvertes sont entourées de parois vitrées, assurant l’isolation thermique et
+                                le confort des utilisateurs. Un système de drainage dédié évacue efficacement la neige
+                                fondue.</p>
+                        </div>
+
+                        <div class="season-fall-text-block">
+                            <h3>Atmosphère</h3>
+                            <p>Ce projet explore le dialogue entre intérieur et extérieur, en laissant pénétrer la
+                                lumière, le vent et l’ombre dans les espaces de vie sans compromettre leur confort.
+                                L’architecture n’est pas conçue comme une barrière, mais comme un filtre subtil qui
+                                organise le rapport au paysage. Elle accueille la nature dans une logique de calme, de
+                                respiration et de continuité, afin de créer une expérience à la fois paisible et active.
+                                Chaque ouverture transforme la perception du lieu : le paysage ne se contente pas d’être
+                                regardé, il devient partie intégrante du usage de l’espace. Le résultat est une
+                                atmosphère vive, sobre et profondément ancrée dans le climat, où l’habiter s’accorde au
+                                rythme du temps.</p>
+                        </div>
+
+                        <div class="season-fall-text-block">
+                            <h3>Matériaux</h3>
+                            <p>Les matériaux sont choisis pour rendre cette relation visible au quotidien : le bois
+                                apporte une chaleur naturelle, la pierre ancre le volume dans une stabilité durable, et
+                                le métal garantit une rigueur structurelle claire. Ces composés ne sont pas seulement
+                                constructifs ; ils racontent la présence des saisons et la manière dont le bâtiment
+                                s’inscrit dans son environnement. Leur assemblage traduit une logique de durabilité, de
+                                simplicité et d’équilibre, où la matière reste lisible et honnête. L’intention est de
+                                faire apparaître les variations climatiques dans la texture, la teinte et la finition,
+                                de façon à ce que l’intérieur ressente physiquement la présence de l’extérieur sans en
+                                subir les contraintes.</p>
+                        </div>
+
+                        <div class="season-fall-text-block">
+                            <h3>Émotion</h3>
+                            <p>Il s’agit d’embrasser les rythmes saisonniers de l’environnement et de les intégrer au
+                                quotidien. Les espaces sont pensés pour évoluer avec le climat, en laissant apparaître
+                                des variations de lumière, de température et de perception. L’architecture devient alors
+                                un cadre sensible, capable d’accueillir la transformation du monde extérieur sans jamais
+                                perdre sa stabilité. Le projet vise une émotion de lenteur, de continuité et de
+                                vigilance : une sensation de bien-être qui vient du lien entre le corps, le lieu et le
+                                paysage. L’intérieur n’est plus un refuge clos, mais un espace respirant, vivant et
+                                profondément lié à la temporalité du climat.</p>
+                        </div>
+                    </div>
+
+                    <div class="season-fall-media-column">
+                        <div class="season-fall-media-card tall"><img src="images/Image11.jpg"
+                                alt="SEASON FALL visuel 1"></div>
+                        <div class="season-fall-media-card colorful full-width"><img
+                                src="images/PLAN-STUDIO-CREA-RDC-BON.jpg" alt="SEASON FALL visuel 2"></div>
+                        <div class="season-fall-media-card carousel-wide"><img src="images/Image3.jpg"
+                                alt="SEASON FALL visuel 4"></div>
+                        <div class="season-fall-media-card colorful full-width"><img
+                                src="images/PLAN-STUDIO-CREA-BON.jpg" alt="SEASON FALL visuel 5"></div>
+                    </div>
+                </div>
+
+                <section class="season-fall-final-image" aria-label="Image de SEASON FALL">
+                    <img src="images/Facades-.png" alt="SEASON FALL façade">
+                </section>
+
+                <div class="season-fall-socials">
+                    <div class="season-fall-video-card">
+                        <div class="video-platform"><span>TikTok</span><span>Reel</span></div>
+                        <div class="tiktok-embed-wrapper">
+                            <blockquote class="tiktok-embed"
+                                cite="https://www.tiktok.com/@ev.design.lab/video/7531531411531107606"
+                                data-video-id="7531531411531107606">
+                                <section>
+                                    <a target="_blank" rel="noopener noreferrer" title="@ev.design.lab"
+                                        href="https://www.tiktok.com/@ev.design.lab?refer=embed">@ev.design.lab</a>
+                                    <a target="_blank" rel="noopener noreferrer" title="Voir la vidéo TikTok"
+                                        href="https://www.tiktok.com/@ev.design.lab/video/7531531411531107606">Voir
+                                        cette vidéo sur TikTok</a>
+                                </section>
+                            </blockquote>
+                        </div>
+                    </div>
+                    <div class="season-fall-video-card">
+                        <div class="video-platform"><span>Instagram</span><span>Reel</span></div>
+                        <div class="instagram-embed-wrapper">
+                            <blockquote class="instagram-media" data-instgrm-captioned
+                                data-instgrm-permalink="https://www.instagram.com/reel/DMlrsjmh5f8/?utm_source=ig_embed&amp;utm_campaign=loading"
+                                data-instgrm-version="14">
+                                <a href="https://www.instagram.com/reel/DMlrsjmh5f8/?utm_source=ig_embed&amp;utm_campaign=loading"
+                                    target="_blank" rel="noopener noreferrer">Voir cette publication sur Instagram</a>
+                            </blockquote>
+                        </div>
+                    </div>
+                    <div class="season-fall-video-card">
+                        <div class="video-platform"><span>YouTube</span><span>Short</span></div>
+                        <div class="youtube-embed-wrapper">
+                            <iframe width="356" height="634" src="https://www.youtube.com/embed/R6QtIfs3sxI"
+                                title="SEASON FALL - Rooftop project in Canada"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script async src="https://www.instagram.com/embed.js"></script>
+        <script async src="https://www.tiktok.com/embed.js"></script>
+
+        <div id="project-behind-doors" class="page-view" style="display: none;">
+            <div class="project-detail-wrapper">
+                <button class="back-button" onclick="showView('view-projets-grid')">&larr; Retour à l'index</button>
+                <div class="behind-editorial-layout">
+                    <section class="behind-text-image">
+                        <div class="behind-text-block">
+                            <span class="behind-label">01 / Révéler l’existant</span>
+                            <h1>BEHIND DOORS</h1>
+                            <p>L’objectif principal de cette conception est de créer un espace homogène et évolutif.
+
+                                Ici, le bois n’est pas seulement un matériau de finition, mais un véritable élément
+                                structurel qui façonne les volumes, les circulations et les usages.
+
+                                Chaque mur, chaque porte et chaque meuble fait partie d’un ensemble cohérent, où les
+                                espaces peuvent s’ouvrir ou se refermer selon les besoins.</p>
+                        </div>
+                        <div class="behind-small-image"><img src="images/SC-AXO.jpg"
+                                alt="BEHIND DOORS perspective intérieure"></div>
+                    </section>
+
+                    <section class="behind-text-image reverse">
+                        <div class="behind-small-image"><img src="images/FACADE.jpg"
+                                alt="BEHIND DOORS scènes intérieures"></div>
+                        <div class="behind-text-block">
+                            <span class="behind-label">02 / Habiter la nef</span>
+                            <h2>Des espaces sans rupture</h2>
+                            <p>Ce projet a été pensé en lien avec un usage spécifique : celui de la musique. Nous avons
+                                ici un exemple concret avec Michaela Williams, une musicienne new-yorkaise passionnée de
+                                soul, jazz et gospel. Pour elle, l’espace doit être à la fois un lieu de création,
+                                d’enregistrement et de détente.
+
+                                La façade en bois est volontairement sobre et épurée, mais elle intègre des ouvertures
+                                discrètes ainsi qu’une présence végétale qui adoucit l’ensemble.
+
+                                Il ne s’agit pas simplement d’un aménagement intérieur, mais d’une véritable expérience
+                                spatiale, où chaque élément a été pensé pour offrir confort, modularité et immersion.
+                            </p>
+                        </div>
+                    </section>
+
+                    <section class="behind-large-images" aria-label="Galerie principale BEHIND DOORS">
+                        <div class="behind-large-image"><img src="images/SCENES-f.jpg"
+                                alt="BEHIND DOORS détail architectural 1"></div>
+                        <div class="behind-large-image"><img src="images/COLLAGE-PERSPECTIVE.jpg"
+                                alt="BEHIND DOORS détail architectural 2"></div>
+                        <div class="behind-large-image"><img src="images/Untitled-1.jpg"
+                                alt="BEHIND DOORS ambiance intérieure"></div>
+                        <div class="behind-large-image"><img src="images/Untitled-2.jpg"
+                                alt="BEHIND DOORS espace partagé"></div>
+                    </section>
+
+                    <section class="behind-text-block behind-conclusion">
+                        <span class="behind-label">03 / Conclusion</span>
+                        <h2>Une synthèse entre modularité et intimité</h2>
+                        <p>BEHIND DOORS illustre une vision de l’architecture intérieure où la structure en bois devient
+                            le fil conducteur d’une spatialité continue, modulable et chaleureuse.
+
+                            En articulant subtilement les zones d’intimité, de création musicale et de partage, le
+                            projet transcende la simple fonction résidentielle pour offrir un cadre de vie sur mesure.
+
+                            Les menuiseries intégrées, les panneaux mobiles et la gestion soignée de la lumière
+                            naturelle permettent au volume de se métamorphoser au gré des usages quotidiens.
+
+                            Ce projet affirme ainsi qu’une conception attentive aux matières et aux transitions
+                            spatiales peut révéler le plein potentiel d’un lieu tout en garantissant une expérience
+                            immersive et durable.</p>
+                    </section>
+
+                    <div class="season-fall-socials">
+                        <div class="season-fall-video-card">
+                            <div class="video-platform"><span>TikTok</span><span>Reel</span></div>
+                            <div class="tiktok-embed-wrapper">
+                                <blockquote class="tiktok-embed"
+                                    cite="https://www.tiktok.com/@ev.design.lab/video/7524270279309200662"
+                                    data-video-id="7524270279309200662">
+                                    <section>
+                                        <a target="_blank" rel="noopener noreferrer" title="@ev.design.lab"
+                                            href="https://www.tiktok.com/@ev.design.lab?refer=embed">@ev.design.lab</a>
+                                        <a target="_blank" rel="noopener noreferrer" title="Voir la vidéo TikTok"
+                                            href="https://www.tiktok.com/@ev.design.lab/video/7524270279309200662">Voir
+                                            cette vidéo sur TikTok</a>
+                                    </section>
+                                </blockquote>
+                            </div>
+                        </div>
+                        <div class="season-fall-video-card">
+                            <div class="video-platform"><span>Instagram</span><span>Reel</span></div>
+                            <div class="instagram-embed-wrapper">
+                                <blockquote class="instagram-media" data-instgrm-captioned
+                                    data-instgrm-permalink="https://www.instagram.com/reel/DLzTY3WvygY/?utm_source=ig_embed&amp;utm_campaign=loading"
+                                    data-instgrm-version="14">
+                                    <a href="https://www.instagram.com/reel/DLzTY3WvygY/?utm_source=ig_embed&amp;utm_campaign=loading"
+                                        target="_blank" rel="noopener noreferrer">Voir cette publication sur
+                                        Instagram</a>
+                                </blockquote>
+                            </div>
+                        </div>
+                        <div class="season-fall-video-card">
+                            <div class="video-platform"><span>YouTube</span><span>Vidéo</span></div>
+                            <div class="youtube-embed-wrapper">
+                                <iframe width="560" height="315"
+                                    src="https://www.youtube.com/embed/O2mP6O76Kdw?si=2Nr__M5-5E0bnNEt"
+                                    title="BEHIND DOORS - YouTube"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="project-kakuten-museum" class="page-view" style="display: none;">
+            <div class="project-detail-wrapper">
+                <button class="back-button" onclick="showView('view-projets-grid')">&larr; Retour à l'index</button>
+                <div class="detail-header-img"><img src="images/kakuten_museum_banniere.jpg" alt="KAKUTEN MUSEUM"></div>
+                <div class="detail-body">
+                    <div class="detail-info-panel">
+                        <h1 class="detail-title">KAKUTEN MUSEUM</h1>
+                        <div class="detail-meta-tags">Architecture publique &bull; Pavillon d'exposition</div>
+                        <p class="detail-description">Ce projet marque le début de mon travail estival et explore les
+                            possibilités verticales offertes par les angles d’un cube. Inspiré par la structure
+                            traditionnelle du Torii, j’ai été fasciné par la manière dont un symbole architectural
+                            ancestral pouvait générer une expérience aussi immersive et spirituelle. J’ai souhaité
+                            retranscrire ce sentiment d’ouverture et de sérénité à travers un langage architectural
+                            similaire, afin d’offrir aux visiteurs un cadre propice à la contemplation de la beauté de
+                            l’art japonais.
+
+                            La structure est imprégnée d’une symbolique presque religieuse, née d’une idée fondatrice :
+                            élever chaque coin du volume vers le ciel. Ce geste suggère une force invisible, comme si
+                            une entité tirait doucement les extrémités vers le haut — à la manière de fils guidant une
+                            marionnette. Cette élévation traduit une aspiration spirituelle, une tentative de relier la
+                            terre au ciel, le tangible à l’intangible.
+
+                            Dans l’image du projet, le musée s’implante dans un écrin forestier, renforçant son
+                            caractère contemplatif et sa connexion à la nature. Le bâtiment se compose de volumes
+                            modulaires en bois, surmontés de toitures inclinées dont les angles relevés dessinent une
+                            silhouette sculpturale et dynamique. De larges ouvertures vitrées encadrent le paysage et
+                            laissent pénétrer la lumière naturelle, créant un dialogue permanent entre l’intérieur et
+                            l’extérieur. La répétition de cette géométrie ascendante évoque le rythme des portiques
+                            sacrés, accompagnant le visiteur dans une expérience sensorielle et méditative. L’usage de
+                            textures boisées et de lignes épurées affirme l’équilibre recherché entre tradition et
+                            modernité.</p>
+                    </div>
+                    <div class="project-video-frame">
+                        <iframe width="560" height="315"
+                            src="https://www.youtube.com/embed/158I3kAOFwo?si=7nHnLtzyPn5XuEVz"
+                            title="YouTube video player" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                    <div class="detail-gallery inline">
+                        <div class="img-frame"><img src="images/kakuten_museum_detail1.jpg"
+                                alt="KAKUTEN MUSEUM Visuel 1"></div>
+                        <div class="img-frame"><img src="images/kakuten_museum_detail2.jpg"
+                                alt="KAKUTEN MUSEUM Visuel 2"></div>
+                    </div>
+                    <div class="detail-fullwidth-frame"><img src="images/kakuten_museum_detail3.jpg"
+                            alt="KAKUTEN MUSEUM Detail Fullwidth 1"></div>
+                    <div class="detail-fullwidth-frame"><img src="images/kakuten_museum_detail4.jpg"
+                            alt="KAKUTEN MUSEUM Detail Fullwidth 2"></div>
+                    <div class="detail-fullwidth-frame"><img src="images/kakuten_museum_detail5.jpg"
+                            alt="KAKUTEN MUSEUM Detail Fullwidth 3"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="project-mido-house" class="page-view" style="display: none;">
+            <div class="project-detail-wrapper">
+                <button class="back-button" onclick="showView('view-projets-grid')">&larr; Retour à l'index</button>
+                <div class="detail-header-img mido-image-block mido-feature"><img src="images/_DSC5056.jpg"
+                        alt="MIDO HOUSE vue intérieure"></div>
+                <div class="mido-editorial-layout">
+                    <section class="mido-text-block">
+                        <span class="mido-label">01 / Intention</span>
+                        <h1 class="detail-title">MIDO HOUSE</h1>
+                        <p>Une micro-architecture compacte et modulaire pensée pour répondre aux nouveaux modes de vie
+                            citadins et réinventer le rapport à l’espace essentiel. Chaque élément est conçu avec
+                            précision pour libérer le sol, valoriser les ressources constructives locales et faire
+                            évoluer le logement au fil de la journée.</p>
+                    </section>
+
+                    <section class="mido-text-image">
+                        <div class="mido-text-block">
+                            <span class="mido-label">02 / Principe</span>
+                            <h2>Habiter autrement</h2>
+                            <p>Notre Mido House est inspirée des cases africaines en terre et paille, dont la simplicité
+                                constructive répond directement aux conditions du territoire. Nous avons souhaité créer
+                                un module destiné à être placé au Gabon et à utiliser les ressources matérielles
+                                disponibles localement : l’argile, la paille et les bambous. Le projet s’appuie ainsi
+                                sur une architecture accessible, capable d’être construite, réparée et transformée avec
+                                des matériaux connus des habitants.
+
+                                En premier lieu, nous avions pensé à mettre en place des toits en pente afin de récolter
+                                les eaux de pluie et de permettre aux habitants de disposer d’une réserve d’eau. Même si
+                                cette idée a ensuite évolué, elle a posé les bases du projet : concevoir un habitat
+                                autonome, adapté au climat et attentif aux besoins quotidiens. La forme finale conserve
+                                cette volonté de simplicité tout en développant une organisation plus souple et plus
+                                confortable.</p>
+                        </div>
+                        <div class="mido-image-block"><img src="images/Mido_House_Workshop_.pdf-(1).jpg"
+                                alt="MIDO HOUSE espace intérieur"></div>
+                    </section>
+
+                    <section class="mido-text-image reverse">
+                        <div class="mido-image-block"><img src="images/Mido_House_Workshop_.pdf-(2).jpg"
+                                alt="MIDO HOUSE volume intérieur"></div>
+                        <div class="mido-text-block">
+                            <span class="mido-label">03 / Atmosphère</span>
+                            <h2>Une pièce continue</h2>
+                            <p>En faisant évoluer notre projet nous avons décidé de sortir de notre idée de récupération
+                                d’eau car trop restreinte.
+                                L’argile que nous pensions couler au départ s’est transformée en briques de terres
+                                cuites pouvant s’assembler facilement. Nous avons donc pensé à créer des briques
+                                ajourées qui permettraient à la lumière de pénétrer dans le module et de venir créer des
+                                motifs sur les parois intérieures. Ensuite, nous avons commencé à imaginer des
+                                aménagements intérieurs dans le cas où le logement n’est constitué que d’un seul module.
+                            </p>
+                        </div>
+                    </section>
+
+                    <section class="mido-split">
+                        <div class="mido-image-block"><img src="images/Mido_House_Workshop_.pdf-(3).jpg"
+                                alt="MIDO HOUSE plan des modules"></div>
+                        <div class="mido-image-block"><img src="images/Mido_House_Workshop_.pdf-(5).jpg"
+                                alt="MIDO HOUSE schéma explicatif"></div>
+                    </section>
+
+                    <section class="mido-text-block">
+                        <span class="mido-label">04 / Organisation</span>
+                        <h2>Une structure adaptable</h2>
+                        <p>Les deux demi-cercles sont constitués d’un soubassement d’un mètre en briques pleines
+                            surmonté d’un appareillage ajouré qui filtre la lumière naturelle. Seule la salle de bain
+                            est entièrement fermée en briques pleines pour préserver l’intimité. La bande centrale en
+                            galets structure l’ensemble du plan en reliant l’espace humide (cuisine et salle de bain) à
+                            l’espace de détente (salon et chambre). La douche d’extérieur prend place sur cet axe
+                            minéral à la jonction des toitures, tandis que les cloisons en bambous s’élèvent jusqu’à
+                            2,20 m pour laisser circuler l’air et la lumière.</p>
+                    </section>
+
+                    <section class="mido-text-image">
+                        <div class="mido-text-block">
+                            <span class="mido-label">05 / Circulation</span>
+                            <h2>Le mouvement comme plan</h2>
+                            <p>La circulation n’est jamais résiduelle : elle distribue les fonctions, cadre les
+                                perspectives et transforme chaque déplacement en expérience spatiale. Dans Mido House,
+                                la bande centrale devient le véritable organisateur du plan. Elle rassemble les espaces
+                                humides, accompagne les changements de niveau et crée une transition claire entre les
+                                différentes zones de vie.
+
+                                Les déplacements se font autour de ce centre plutôt que dans un couloir séparé. Cette
+                                disposition permet de gagner de la surface tout en conservant une lecture intuitive du
+                                logement. En passant du salon à la chambre, de la cuisine à la salle de bain, l’habitant
+                                traverse une succession de seuils et de cadrages qui donnent une impression de
+                                profondeur à un module compact. La circulation devient ainsi un espace habité, capable
+                                d’accueillir les usages, la lumière et les rencontres.</p>
+                        </div>
+                        <div class="mido-image-block"><img src="images/Mido_House_Workshop_.pdf-(6).jpg"
+                                alt="MIDO HOUSE coupe et aménagement"></div>
+                    </section>
+
+                    <section class="mido-text-image reverse">
+                        <div class="mido-image-block"><img src="images/Mido_House_Workshop_.pdf-(7).jpg"
+                                alt="MIDO HOUSE plan général"></div>
+                        <div class="mido-text-block">
+                            <span class="mido-label">06 / Détails</span>
+                            <h2>Tout à sa place</h2>
+                            <p>Le mobilier intégré permet de conserver une sensation de calme. Les rangements, les
+                                portes et les équipements disparaissent lorsque leur usage est terminé, afin que chaque
+                                partie du module puisse retrouver une fonction plus ouverte. Cette logique évite
+                                d’accumuler des meubles indépendants et maintient une continuité visuelle entre les
+                                différents espaces.
+
+                                Les aménagements sont pensés comme une seconde architecture : ils prolongent les murs,
+                                accompagnent les cloisons en bambou et s’insèrent dans les zones moins utilisées. Un
+                                même élément peut alors servir de rangement, de séparation ou de support selon le moment
+                                de la journée. Cette réversibilité permet au logement de s’adapter à plusieurs modes de
+                                vie sans perdre son identité ni sa lisibilité.</p>
+                        </div>
+                    </section>
+
+                    <section class="mido-split">
+                        <div class="mido-image-block"><img src="images/Mido_House_Workshop_.pdf-(8).jpg"
+                                alt="MIDO HOUSE plan détaillé"></div>
+                        <div class="mido-image-block"><img src="images/_DSC5060.jpg"
+                                alt="MIDO HOUSE détails techniques"></div>
+                    </section>
+
+                    <section class="mido-image-block mido-plan">
+                        <img src="images/_DSC5064.jpg" alt="MIDO HOUSE plan technique complémentaire">
+                    </section>
+
+                    <section class="mido-text-block mido-conclusion">
+                        <span class="mido-label">07 / Conclusion</span>
+                        <h2>La petite surface comme richesse</h2>
+                        <p>MIDO HOUSE propose une manière plus précise d’habiter : moins d’espace perdu, davantage de
+                            possibilités. Le projet part d’un module réduit, mais refuse de considérer la petite surface
+                            comme une contrainte définitive. Chaque choix, de la géométrie des demi-cercles à la
+                            position de la bande centrale, cherche à produire plusieurs usages avec un minimum de
+                            matière et de séparation.</p>
+                        <p>L’architecture devient un système discret qui accompagne les usages sans les figer. Les
+                            briques ajourées filtrent la lumière, les bambous laissent circuler les regards et le
+                            mobilier intégré libère le sol lorsque cela est nécessaire. Mido House défend ainsi une
+                            approche attentive de l’habitat : construire avec les ressources du lieu, organiser les
+                            espaces avec précision et laisser la vie quotidienne transformer progressivement le module.
+                        </p>
+                    </section>
+
+                    <div class="season-fall-socials">
+                        <div class="season-fall-video-card">
+                            <div class="video-platform"><span>TikTok</span><span>Reel</span></div>
+                            <div class="tiktok-embed-wrapper">
+                                <blockquote class="tiktok-embed"
+                                    cite="https://www.tiktok.com/@ev.design.lab/video/7448304302340279585"
+                                    data-video-id="7448304302340279585">
+                                    <section>
+                                        <a target="_blank" rel="noopener noreferrer" title="@ev.design.lab"
+                                            href="https://www.tiktok.com/@ev.design.lab?refer=embed">@ev.design.lab</a>
+                                        <a target="_blank" rel="noopener noreferrer" title="Voir la vidéo TikTok"
+                                            href="https://www.tiktok.com/@ev.design.lab/video/7448304302340279585">Voir
+                                            cette vidéo sur TikTok</a>
+                                    </section>
+                                </blockquote>
+                            </div>
+                        </div>
+                        <div class="season-fall-video-card">
+                            <div class="video-platform"><span>Instagram</span><span>Reel</span></div>
+                            <div class="instagram-embed-wrapper">
+                                <blockquote class="instagram-media" data-instgrm-captioned
+                                    data-instgrm-permalink="https://www.instagram.com/reel/DDkQY9SPVhb/?utm_source=ig_embed&amp;utm_campaign=loading"
+                                    data-instgrm-version="14">
+                                    <a href="https://www.instagram.com/reel/DDkQY9SPVhb/?utm_source=ig_embed&amp;utm_campaign=loading"
+                                        target="_blank" rel="noopener noreferrer">Voir cette publication sur
+                                        Instagram</a>
+                                </blockquote>
+                            </div>
+                        </div>
+                        <div class="season-fall-video-card">
+                            <div class="video-platform"><span>YouTube</span><span>Short</span></div>
+                            <div class="youtube-embed-wrapper">
+                                <iframe width="356" height="634" src="https://www.youtube.com/embed/YQXQjOAtr9Y"
+                                    title="The Mido House project - interior design"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="project-lart-du-lien" class="page-view" style="display: none;">
+            <div class="project-detail-wrapper">
+                <button class="back-button" onclick="showView('view-projets-grid')">&larr; Retour à l'index</button>
+                <div class="detail-header-img"><img src="images/lart_du_lien_cover - Copie.jpg" alt="L'ART DU LIEN">
+                </div>
+                <div class="detail-body">
+                    <div class="detail-info-panel">
+                        <h1 class="detail-title">L'ART DU LIEN</h1>
+                        <div class="detail-meta-tags">Équipement culturel &bull; Architecture écoresponsable</div>
+                        <p class="detail-description">L’Art du Lien explore la relation entre l’humain, les matériaux et
+                            les espaces à travers une architecture sensible. Le projet réinterprète les savoir-faire
+                            artisanaux du bois pour créer des assemblages qui connectent les individus.
+                            L’idée centrale est de créer un espace de rencontre en utilisant exclusivement des
+                            techniques de jointures bois traditionnelles japonaises, sans ajout métallique. Ces
+                            assemblages, comme le Kigumi, permettent de relier les éléments structurels par emboîtement,
+                            tenon-mortaise ou queues d’aronde, avec une précision millimétrique.</p>
+                        <img class="lart-du-lien-image" src="images/DETAILS .png" alt="L'ART DU LIEN - visuel vertical">
+                    </div>
+                    <div class="detail-gallery">
+                        <div class="img-frame"><img src="images/CZLWKYSC1FNQ_Aerial.jpg" alt="L'ART DU LIEN Visuel 1">
+                        </div>
+                        <div class="img-frame"><img src="images/CZLWKYSC1FNQ_EyeLevel.jpg" alt="L'ART DU LIEN Visuel 2">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-info-panel"
+                    style="max-width: 100%; margin-top: 48px; border-top: 1px solid var(--line-soft); padding-top: 28px;">
+                    <div class="detail-meta-tags">Contexte &bull; Concours d'architecture</div>
+                    <p class="detail-description">Ce projet s'inscrit comme ma deuxième participation à un concours
+                        d'architecture. Entièrement gratuit et ouvert à tous, il proposait un exercice de synthèse
+                        intense qui ne demandait qu'une seule coupe et deux visuels clés : une vue aérienne et une
+                        perspective à vue d'homme. J'ai mené l'ensemble de la conception et du rendu en l'espace de deux
+                        semaines seulement, en parallèle direct de mes cours d'architecture. Ce rythme soutenu m'a
+                        poussé à aller à l'essentiel et à affiner mes partis pris spatiaux comme structurels. J'ai pris
+                        un immense plaisir à relever ce défi, qui a constitué une formidable opportunité d'apprentissage
+                        et d'expérimentation. Cette démarche m'a permis d'approfondir ma maîtrise des assemblages
+                        traditionnels et de la narration graphique en un temps record.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="project-shamal-house" class="page-view" style="display: none;">
+            <div class="project-detail-wrapper">
+                <button class="back-button" onclick="showView('view-projets-grid')">&larr; Retour à l'index</button>
+                <div class="shamal-editorial-layout">
+                    <section class="shamal-text-image">
+                        <div class="shamal-text-block">
+                            <span class="shamal-label">01 / Implantation</span>
+                            <h1>SHAMAL HOUSE</h1>
+                            <p>Shamal House est une villa contemporaine pensée comme une réponse directe au climat
+                                côtier. Sa volumétrie s’installe dans le paysage sans chercher à le dominer, en
+                                s’appuyant sur des lignes horizontales, des vues traversantes et une relation constante
+                                avec l’extérieur.
+
+                                Le projet organise les espaces autour de terrasses protégées. Les avancées de toiture et
+                                les porte-à-faux filtrent les rayons du soleil, tandis que les ouvertures cadrent les
+                                vues sur le paysage et prolongent les pièces de vie vers le jardin.</p>
+                        </div>
+                        <div class="shamal-image-block shamal-start-image"><img
+                                src="images/Capture d'écran 2026-08-28 152952.png" alt="SHAMAL HOUSE vue extérieure">
+                        </div>
+                    </section>
+
+                    <section class="shamal-text-image reverse">
+                        <div class="shamal-image-block shamal-start-image"><img
+                                src="images/Capture d'écran 2026-08-28 153006.png"
+                                alt="SHAMAL HOUSE relation au paysage"></div>
+                        <div class="shamal-text-block">
+                            <span class="shamal-label">02 / Protection climatique</span>
+                            <h2>Construire avec le vent</h2>
+                            <p>Le vent devient un paramètre de projet plutôt qu’une contrainte secondaire. Les volumes
+                                sont découpés et orientés pour limiter les prises au vent, protéger les espaces
+                                extérieurs et maintenir une ventilation naturelle agréable dans les zones de séjour.
+
+                                La maison recherche un équilibre entre ouverture et protection. Les façades filtrantes,
+                                les terrasses couvertes et les profondeurs de seuil créent plusieurs degrés d’intimité.
+                                On peut ainsi passer progressivement de la lumière forte du paysage à une atmosphère
+                                plus calme et abritée.</p>
+                        </div>
+                    </section>
+
+                    <section class="shamal-vertical-images" aria-label="Vues carrées de SHAMAL HOUSE">
+                        <div class="shamal-image-block"><img src="images/Capture d'écran 2026-02-04 122637.jpg"
+                                alt="SHAMAL HOUSE vue carrée 1">
+                        </div>
+                        <div class="shamal-image-block"><img src="images/Capture d'écran 2026-02-04 122652.jpg"
+                                alt="SHAMAL HOUSE vue carrée 2"></div>
+                    </section>
+
+                    <section class="shamal-horizontal-images" aria-label="Vues horizontales de SHAMAL HOUSE">
+                        <div class="shamal-image-block"><img src="images/SC-XO.jpg"
+                                alt="SHAMAL HOUSE vue horizontale 1"></div>
+                        <div class="shamal-image-block"><img src="images/COLLAGE-PERSPETIVE.jpg"
+                                alt="SHAMAL HOUSE vue horizontale 2"></div>
+                    </section>
+
+                    <section class="shamal-final-image" aria-label="Image finale de SHAMAL HOUSE">
+                        <img src="images/yu.png" alt="SHAMAL HOUSE façade principale">
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <section id="contact-section">
+            <div class="contact-details">
+                <h2>Contact & Collaboration</h2>
+                <p><strong>VASSEUR Enzo</strong></p>
+                <p>Étudiant en Architecture</p>
+                <p>Nantes, France</p>
+                <p>Conception spatiale, modélisation 3D<br>et rendus photoréalistes.</p>
+                <br>
+                <p>evasseur423@gmail.com</p>
+            </div>
+
+            <div class="contact-form">
+                <h2>Lancer un projet ?</h2>
+                <form onsubmit="event.preventDefault();">
+                    <input type="text" placeholder="Nom" required>
+                    <input type="email" placeholder="Adresse Email" required>
+                    <textarea rows="4" placeholder="Votre message" required></textarea>
+                    <button type="submit">Envoyer</button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Three.js et Modules 3D (FBX, GLTF, OBJ) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+    <script src="js/viewer3d.js"></script>
+    <script src="js/main.js" defer></script>
+</body>
+
+</html>
