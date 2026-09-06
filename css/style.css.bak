@@ -156,27 +156,21 @@ video {
     }
 }
 
-/* --- VUE ACCUEIL (Carrousels & Hero Drawing) --- */
+/* --- VUE ACCUEIL (Carrousels) --- */
 .home-feature-image {
-    width: 100%;
+    width: 100vw;
     max-width: 1920px;
-    height: 85vh;
-    min-height: 520px;
-    max-height: 1100px;
+    height: 1337px;
     margin: 0 auto 50px;
     overflow: hidden;
     background: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
 }
 
 .home-feature-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: center center;
+    object-fit: contain;
+    object-position: center;
     display: block;
     background: #ffffff;
 }
@@ -1854,21 +1848,6 @@ img[src$=".png"] {
 
 /* --- MEDIA QUERIES: Tablettes et Mobiles --- */
 @media (max-width: 900px) {
-    .home-feature-image {
-        width: 100%;
-        height: 100vh;
-        height: 100dvh;
-        min-height: unset;
-        max-height: none;
-        margin: 0 auto 30px;
-    }
-
-    .home-feature-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center center;
-    }
     .carousels-wrapper {
         flex-direction: column;
         height: auto;
@@ -1941,21 +1920,6 @@ img[src$=".png"] {
 }
 
 @media (max-width: 600px) {
-    .home-feature-image {
-        width: 100vw;
-        height: 100vh;
-        height: 100dvh;
-        min-height: unset;
-        max-height: none;
-        margin: 0 0 20px 0;
-    }
-
-    .home-feature-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center center;
-    }
     #menu-toggle {
         top: 20px;
         left: 12px;
@@ -2440,24 +2404,5 @@ img[src$=".png"] {
     .notice-footer {
         flex-direction: column;
         align-items: flex-start;
-    }
-}
-
-/* Adaptation spécifique orientation verticale (Portrait) pour smartphones et tablettes */
-@media (orientation: portrait) and (max-width: 1024px) {
-    .home-feature-image {
-        width: 100%;
-        height: 100vh;
-        height: 100dvh;
-        min-height: unset;
-        max-height: none;
-        margin-bottom: 24px;
-    }
-
-    .home-feature-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center center;
     }
 }
