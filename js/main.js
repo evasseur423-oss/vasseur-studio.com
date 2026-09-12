@@ -175,9 +175,102 @@ async function cropAllImagesInFrames() {
     }
 }
 
+// --- 6. Gestionnaire du Formulaire de Contact ---
+function escapeContactHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+function setupContactForm() {
+    const form = document.getElementById('contact-form');
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('contact-submit-btn');
+        const btnText = submitBtn ? submitBtn.querySelector('.btn-text') : null;
+        const btnLoader = submitBtn ? submitBtn.querySelector('.btn-loader') : null;
+        const feedback = document.getElementById('contact-form-feedback');
+
+        const nameInput = document.getElementById('contact-name');
+        const emailInput = document.getElementById('contact-email');
+        const messageInput = document.getElementById('contact-message');
+
+        const name = nameInput ? nameInput.value.trim() : '';
+        const email = emailInput ? emailInput.value.trim() : '';
+        const message = messageInput ? messageInput.value.trim() : '';
+
+        if (!name || !email || !message) {
+            if (feedback) {
+                feedback.className = 'contact-feedback error';
+                feedback.style.display = 'block';
+                feedback.textContent = 'Veuillez renseigner tous les champs obligatoires.';
+            }
+            return;
+        }
+
+        // État de chargement
+        if (submitBtn) submitBtn.disabled = true;
+        if (btnText) btnText.style.display = 'none';
+        if (btnLoader) btnLoader.style.display = 'inline-block';
+        if (feedback) feedback.style.display = 'none';
+
+        try {
+            const formData = new FormData(form);
+            const response = await fetch('https://formsubmit.co/ajax/evasseur423@gmail.com', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success !== 'false') {
+                form.reset();
+                if (feedback) {
+                    feedback.className = 'contact-feedback success';
+                    feedback.style.display = 'block';
+                    feedback.innerHTML = `<strong>Merci ${escapeContactHtml(name)} !</strong> Votre message a bien été transmis. Enzo Vasseur vous répondra très rapidement.`;
+                }
+                if (btnText) {
+                    btnText.textContent = 'Message envoyé ✓';
+                    btnText.style.display = 'inline-block';
+                }
+                if (btnLoader) btnLoader.style.display = 'none';
+
+                setTimeout(() => {
+                    if (submitBtn) submitBtn.disabled = false;
+                    if (btnText) btnText.textContent = 'Envoyer le message';
+                }, 5000);
+            } else {
+                throw new Error(data.message || "Erreur lors de l'envoi");
+            }
+        } catch (error) {
+            console.warn('Erreur transmission formulaire :', error);
+            if (feedback) {
+                feedback.className = 'contact-feedback error';
+                feedback.style.display = 'block';
+                const mailtoUrl = `mailto:evasseur423@gmail.com?subject=${encodeURIComponent('Contact Studio - ' + name)}&body=${encodeURIComponent(message + '\n\n---\nExpéditeur : ' + name + ' (' + email + ')')}`;
+                feedback.innerHTML = `L'envoi automatique a rencontré une difficulté réseau.<br><a href="${mailtoUrl}" class="contact-mailto-fallback">Cliquez ici pour ouvrir directement votre messagerie email</a>`;
+            }
+            if (submitBtn) submitBtn.disabled = false;
+            if (btnText) {
+                btnText.textContent = 'Réessayer';
+                btnText.style.display = 'inline-block';
+            }
+            if (btnLoader) btnLoader.style.display = 'none';
+        }
+    });
+}
+
 // Initialisations au chargement
 document.addEventListener('DOMContentLoaded', () => {
     setupInfiniteCarousels();
+    setupContactForm();
 });
 
 window.addEventListener('load', () => {
@@ -189,3 +282,4 @@ window.addEventListener('resize', () => {
     clearTimeout(_cropTimeout);
     _cropTimeout = setTimeout(cropAllImagesInFrames, 300);
 });
+
