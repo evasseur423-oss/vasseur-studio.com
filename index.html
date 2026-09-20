@@ -2785,10 +2785,34 @@
                         </svg>
                     </a>
                 </div>
+
+                <div id="secret-counter-container" style="position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px; overflow: hidden;">
+                    <a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fvasseur-studio.com&count_bg=%23111111&title_bg=%234a4a47&icon=&icon_color=%23E7E7E7&title=vues&edge_flat=true" alt="Compteur de vues"/></a>
+                </div>
             </div>
 
             <div class="contact-form">
-                <h2>Lancer un projet ?</h2>
+                <h2 id="secret-trigger" style="cursor: default;" title="Lancer un projet ?">Lancer un projet ?</h2>
+                <script>
+                    document.getElementById('secret-trigger').addEventListener('dblclick', function() {
+                        var counter = document.getElementById('secret-counter-container');
+                        if (counter.style.opacity === '0') {
+                            counter.style.position = 'static';
+                            counter.style.opacity = '1';
+                            counter.style.width = 'auto';
+                            counter.style.height = 'auto';
+                            counter.style.pointerEvents = 'auto';
+                            counter.style.marginTop = '30px';
+                        } else {
+                            counter.style.position = 'absolute';
+                            counter.style.opacity = '0';
+                            counter.style.width = '1px';
+                            counter.style.height = '1px';
+                            counter.style.pointerEvents = 'none';
+                            counter.style.marginTop = '0';
+                        }
+                    });
+                </script>
                 <form id="contact-form" action="https://formsubmit.co/evasseur423@gmail.com" method="POST">
                     <input type="text" name="_honey" style="display:none">
                     <input type="hidden" name="_captcha" value="false">
