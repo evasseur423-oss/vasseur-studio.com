@@ -13,40 +13,245 @@ if (menuToggle && sidebar) {
     });
 }
 
-// --- 2. Gestion du changement de page (Vues dynamiques) ---
-function showView(viewId) {
-    // Masquer toutes les sections de page
+// --- 2. Gestion du changement de page (Vues dynamiques & Navigation History API) ---
+const viewAliases = {
+    'asset-chaise-kurisu': 'asset-unique-01',
+    'asset-table-kanso': 'asset-unique-02',
+    'asset-banc-engawa': 'asset-unique-03',
+    'asset-suspension-akari': 'asset-unique-29',
+    'asset-claustra-kumiko': 'asset-unique-28',
+    'asset-fauteuil-yugen': 'asset-unique-27',
+    'asset-etagere-sabi': 'asset-unique-18',
+    'asset-enfilade-tatami': 'asset-unique-17',
+    'asset-vase-kintsugi': 'asset-unique-30',
+    'asset-paravent-shibui': 'asset-unique-31',
+    'asset-structure-modulaire': 'asset-unique-20',
+    'asset-mobilier-interieur': 'asset-unique-06'
+};
+
+// État de navigation et mémorisation des positions de défilement
+let currentViewId = 'view-home';
+let navigationDepth = 0;
+const viewScrollPositions = {};
+
+function showView(viewId, options = {}) {
+    // 1. Redirection des anciens liens / alias
+    if (viewAliases[viewId]) {
+        viewId = viewAliases[viewId];
+    }
+
+    const targetView = document.getElementById(viewId);
+    if (!targetView) {
+        console.warn('Vue introuvable :', viewId);
+        return;
+    }
+
+    // 2. Sauvegarder la position de défilement de l'ancienne vue
+    if (currentViewId && currentViewId !== viewId) {
+        try {
+            viewScrollPositions[currentViewId] = window.scrollY || document.documentElement.scrollTop || 0;
+        } catch (e) {}
+    }
+
+    // 3. AFFICHAGE IMMÉDIAT ET GARANTI DU DOM (S'exécute toujours en premier sans bloquer)
     document.querySelectorAll('.page-view').forEach(view => {
         view.style.display = 'none';
     });
+    targetView.style.display = 'block';
 
-    // Afficher la section demandée
-    const targetView = document.getElementById(viewId);
-    if (targetView) {
-        targetView.style.display = 'block';
-    }
-
-    // Réinitialiser le menu
+    // 4. Réinitialiser le menu latéral
     if (sidebar && menuToggle) {
         sidebar.classList.remove('active');
         menuToggle.textContent = 'Menu';
     }
 
-    // Remonter immédiatement en haut de page sans animation
-    window.scrollTo(0, 0);
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-
-    // Réinitialiser les embeds Instagram au changement de vue
-    if (window.instgrm && window.instgrm.Embeds) {
-        window.instgrm.Embeds.process();
+    // 5. Gestion propre du défilement
+    const shouldRestoreScroll = options.restoreScroll || options.fromPopState;
+    if (shouldRestoreScroll && viewScrollPositions[viewId] !== undefined) {
+        const savedY = viewScrollPositions[viewId];
+        requestAnimationFrame(() => {
+            window.scrollTo(0, savedY);
+            document.documentElement.scrollTop = savedY;
+            document.body.scrollTop = savedY;
+        });
+    } else {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
     }
 
-    // Initialiser ou redimensionner le visualiseur 3D si une vue d'asset est active
-    if (viewId.startsWith('asset-') && typeof initOrResizeViewer3D === 'function') {
-        setTimeout(() => initOrResizeViewer3D(viewId), 60);
+    // 6. Mettre à jour l'identifiant courant
+    const previousViewId = currentViewId;
+    currentViewId = viewId;
+
+    // 7. Embeds Instagram
+    if (window.instgrm && window.instgrm.Embeds) {
+        try { window.instgrm.Embeds.process(); } catch (e) {}
+    }
+
+    // 8. Configuration d'affichage des médias (Photo HD par défaut pour les fiches 3D)
+    if (viewId === 'project-pallet-3d') {
+        // Montage automatique de la vue 3D interactive pour le Projet EPAL 3D
+        if (typeof mount3DViewerForAsset === 'function') {
+            setTimeout(() => {
+                mount3DViewerForAsset('project-pallet-3d');
+            }, 60);
+        }
+    } else if (viewId.startsWith('asset-')) {
+        const container = targetView.querySelector('.media-viewer-container');
+        if (container) {
+            const tabs = container.querySelectorAll('.viewer-tab-btn');
+            tabs.forEach(t => t.classList.toggle('active', t.dataset.mode === 'image'));
+            const vp3D = container.querySelector('.viewer-3d-viewport');
+            const vpImg = container.querySelector('.viewer-image-viewport');
+            if (vp3D) vp3D.classList.remove('active');
+            if (vpImg) vpImg.classList.add('active');
+        }
+        // Par défaut sur une fiche asset, la photo est affichée : on stoppe la 3D pour préserver le GPU
+        if (typeof stop3DViewer === 'function') {
+            stop3DViewer();
+        }
+    } else {
+        // Toutes les autres vues (accueil, projets, etc.) : arrêter immédiatement la boucle Three.js
+        if (typeof stop3DViewer === 'function') {
+            stop3DViewer();
+        }
+        if (typeof isRotating !== 'undefined' && isRotating) {
+            isRotating = false;
+            document.querySelectorAll('.btn-rotate-tool').forEach(btn => btn.classList.remove('active'));
+        }
+    }
+
+    // 9. MISE À JOUR SÉCURISÉE DE L'HISTORIQUE (protégée contre les restrictions file:// et webviews)
+    const pushHistory = options.pushHistory !== false;
+    const replaceHistory = options.replaceHistory === true;
+    const fromPopState = options.fromPopState === true;
+
+    if (!fromPopState) {
+        const targetHash = '#' + viewId;
+        try {
+            if (replaceHistory) {
+                if (window.history && window.history.replaceState) {
+                    window.history.replaceState({ viewId: viewId }, '', targetHash);
+                }
+            } else if (pushHistory) {
+                navigationDepth++;
+                if (window.history && window.history.pushState) {
+                    window.history.pushState({ viewId: viewId, previousViewId: previousViewId }, '', targetHash);
+                }
+            }
+        } catch (historyErr) {
+            // Repli sécurisé : mise à jour de l'ancre si pushState échoue
+            try {
+                if (window.location.hash !== targetHash) {
+                    window.location.hash = targetHash;
+                }
+            } catch (hashErr) {}
+        }
     }
 }
+
+// Fonction de retour arrière intelligent
+function goBack(fallbackViewId = 'view-catalogue') {
+    try {
+        if (navigationDepth > 0 && window.history && window.history.length > 1) {
+            window.history.back();
+            return;
+        }
+    } catch (e) {}
+    showView(fallbackViewId, { restoreScroll: true });
+}
+window.goBack = goBack;
+
+// Écouteur pour la flèche retour et suivant du navigateur (popstate & hashchange)
+function handleHistoryNav(e) {
+    let targetViewId = e && e.state && e.state.viewId;
+    if (!targetViewId) {
+        const hash = (window.location.hash || '').replace('#', '').trim();
+        targetViewId = hash ? (viewAliases[hash] || hash) : 'view-home';
+    }
+
+    if (targetViewId && targetViewId !== currentViewId) {
+        if (navigationDepth > 0) {
+            navigationDepth--;
+        }
+        showView(targetViewId, { fromPopState: true, restoreScroll: true, pushHistory: false });
+    }
+}
+
+window.addEventListener('popstate', handleHistoryNav);
+window.addEventListener('hashchange', handleHistoryNav);
+
+// Interception des clics sur tous les boutons "Retour" du site pour assurer un retour propre
+document.addEventListener('click', (e) => {
+    const backBtn = e.target.closest('.back-button');
+    if (!backBtn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const isProduct = !!backBtn.closest('.fab-product-view');
+    const fallback = isProduct ? 'view-catalogue' : 'view-projets-grid';
+    goBack(fallback);
+}, true);
+
+// Liens de navigation du menu latéral : empêcher tout comportement par défaut '#' intempestif
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+        });
+    });
+});
+
+// Clic sur le logo pour revenir à l'accueil proprement
+const siteLogo = document.querySelector('.site-logo');
+if (siteLogo) {
+    siteLogo.addEventListener('click', (e) => {
+        e.preventDefault();
+        showView('view-home');
+    });
+}
+
+// --- 2b. Filtrage dynamique du catalogue d'assets 3D ---
+function filterCatalogue(category, btn) {
+    document.querySelectorAll('.catalogue-filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    const items = document.querySelectorAll('#catalogue-items-grid .grid-item');
+    items.forEach(item => {
+        if (category === 'all' || item.dataset.category === category) {
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+function filterAndShowCategory(category) {
+    showView('view-catalogue');
+    const btn = document.querySelector(`.catalogue-filter-btn[onclick*="'${category}'"]`);
+    filterCatalogue(category, btn);
+}
+
+// Fonction de bascule de photo via les miniatures dans le visualiseur
+function switchViewerThumb(thumbBtn, imgSrc) {
+    if (!thumbBtn) return;
+    const container = thumbBtn.closest('.ecommerce-media') || thumbBtn.closest('.media-viewer-container') || thumbBtn.closest('.ecommerce-media-column') || thumbBtn.closest('.viewer-container') || thumbBtn.closest('.ecommerce-layout');
+    if (!container) return;
+    const mainImg = container.querySelector('.viewer-image-viewport img');
+    if (mainImg) {
+        mainImg.src = imgSrc;
+    }
+    const imgTab = container.querySelector('.viewer-tab-btn[data-mode="image"]') || container.querySelector('.viewer-tab-btn[data-mode="photo"]');
+    if (imgTab && typeof switchAssetMediaMode === 'function') {
+        switchAssetMediaMode(imgTab, imgTab.dataset.mode || 'photo');
+    }
+    container.querySelectorAll('.viewer-thumb-btn').forEach(btn => btn.classList.remove('active'));
+    thumbBtn.classList.add('active');
+}
+window.switchViewerThumb = switchViewerThumb;
+window.switchAssetPhoto = switchViewerThumb;
 
 // --- 3. Défilement fluide vers le contact depuis n'importe quelle vue ---
 function scrollToContact() {
@@ -115,64 +320,10 @@ function moveSlide(carouselId, direction) {
     slidesContainer.style.transform = `translateX(${offset}%)`;
 }
 
-// --- 5. Utilitaire de recadrage d'images carrées via Canvas ---
-async function cropImageToSquare(img) {
-    try {
-        if (!img.complete) {
-            await new Promise(resolve => {
-                img.onload = resolve;
-                img.onerror = resolve;
-            });
-        }
-
-        const naturalW = img.naturalWidth || img.width;
-        const naturalH = img.naturalHeight || img.height;
-        if (!naturalW || !naturalH) return;
-
-        // Déterminer la taille cible d'après le conteneur
-        const frame = img.closest('.img-frame') || img.parentElement;
-        const frameRect = frame.getBoundingClientRect();
-        const displaySize = Math.max(frameRect.width, frameRect.height, 150);
-        const dpr = Math.max(1, window.devicePixelRatio || 1);
-        const target = Math.round(displaySize * dpr);
-
-        const scale = Math.max(target / naturalW, target / naturalH);
-        const drawW = Math.round(naturalW * scale);
-        const drawH = Math.round(naturalH * scale);
-
-        const canvas = document.createElement('canvas');
-        canvas.width = canvas.height = target;
-        const ctx = canvas.getContext('2d');
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
-
-        // Centrer l'image comme un object-fit: cover
-        const dx = Math.round((target - drawW) / 2);
-        const dy = Math.round((target - drawH) / 2);
-        ctx.drawImage(img, dx, dy, drawW, drawH);
-
-        // Utiliser JPEG pour optimiser la taille sauf si PNG avec transparence
-        const mime = (/\.png$/i.test(img.src) || img.src.indexOf('data:image/png') === 0) ? 'image/png' : 'image/jpeg';
-        const dataUrl = canvas.toDataURL(mime, 0.98);
-
-        // Remplacer la source uniquement si le canvas a réussi
-        img.src = dataUrl;
-        img.style.objectFit = 'cover';
-        if (img.decoded) img.decoded();
-    } catch (e) {
-        // En cas d'erreur CORS, fallback sur object-fit CSS natif
-        console.warn('cropImageToSquare ignoré (CORS ou erreur) :', img.src, e.message);
-    }
-}
-
-async function cropAllImagesInFrames() {
-    const imgs = Array.from(document.querySelectorAll('.img-frame img'))
-        .filter(img => !img.closest('.project-detail-wrapper'));
-    for (const img of imgs) {
-        if (img.dataset.crop === 'false') continue;
-        if (img.src.startsWith('data:')) continue;
-        await cropImageToSquare(img);
-    }
+// --- 5. Recadrage d'images (Géré à 100% de manière fluide par le CSS natif via aspect-ratio et object-fit) ---
+function cropAllImagesInFrames() {
+    // Remplacé par le CSS natif GPU-accéléré (.img-frame { aspect-ratio: 1/1; } .img-frame img { object-fit: cover; })
+    // Évite le gel du thread JavaScript et la conversion lourde en Canvas Base64.
 }
 
 // --- 6. Gestionnaire du Formulaire de Contact ---
@@ -267,19 +418,33 @@ function setupContactForm() {
     });
 }
 
+// Initialisation du routeur au chargement initial (support direct des URL avec ancre #)
+function initRouter() {
+    let initialView = 'view-home';
+    try {
+        const hash = (window.location.hash || '').replace('#', '').trim();
+        if (hash) {
+            const resolved = viewAliases[hash] || hash;
+            if (document.getElementById(resolved)) {
+                initialView = resolved;
+            }
+        }
+    } catch (e) {}
+
+    // Rendre la vue initiale visible et initialiser l'état d'historique en toute sécurité
+    showView(initialView, { pushHistory: false, replaceHistory: true, restoreScroll: false });
+}
+
 // Initialisations au chargement
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        initRouter();
+        setupInfiniteCarousels();
+        setupContactForm();
+    });
+} else {
+    initRouter();
     setupInfiniteCarousels();
     setupContactForm();
-});
-
-window.addEventListener('load', () => {
-    setTimeout(cropAllImagesInFrames, 250);
-});
-
-let _cropTimeout;
-window.addEventListener('resize', () => {
-    clearTimeout(_cropTimeout);
-    _cropTimeout = setTimeout(cropAllImagesInFrames, 300);
-});
+}
 

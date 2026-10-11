@@ -1,0 +1,20 @@
+# Sauvegardes locales et dossiers temporaires
+images_backup/
+*.bak
+*.tmp
+*.log
+
+# Scripts de diagnostic et temporaires
+analyze_perf.py
+list_catalog.py
+perf_tools.py
+scratch/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Systèmes d'exploitation
+.DS_Store
+Thumbs.db
+desktop.ini

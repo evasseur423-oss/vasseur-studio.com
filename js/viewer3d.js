@@ -134,10 +134,11 @@ function init3DViewerCore() {
     camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
     camera.position.set(3.5, 2.5, 3.5);
 
-    // 3. Renderer
-    renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    // 3. Renderer (alpha: false pour garantir un canvas opaque sans interférence DOM)
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
     renderer.setSize(600, 600);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Optimisation mobile/retina : ratio max 1.5 pour garantir fluidité 60fps
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     if (THREE.sRGBEncoding) {
         renderer.outputEncoding = THREE.sRGBEncoding;
     } else if (THREE.SRGBColorSpace) {
@@ -162,7 +163,7 @@ function init3DViewerCore() {
     setupGroundPlane();
 
     isInitialized = true;
-    animate();
+    start3DViewer();
 
     window.addEventListener('resize', resize3DViewer);
 }
@@ -177,9 +178,10 @@ function setupStudioLights() {
     const mainLight = new THREE.DirectionalLight(0xfffaee, 1.25);
     mainLight.position.set(6, 10, 5);
     mainLight.castShadow = true;
-    mainLight.shadow.mapSize.width = 2048;
-    mainLight.shadow.mapSize.height = 2048;
+    mainLight.shadow.mapSize.width = 1024;
+    mainLight.shadow.mapSize.height = 1024;
     mainLight.shadow.bias = -0.0001;
+    mainLight.shadow.normalBias = 0.02;
     mainLight.shadow.camera.near = 0.5;
     mainLight.shadow.camera.far = 30;
     mainLight.shadow.camera.left = -4;
@@ -217,6 +219,7 @@ function setupGroundPlane() {
  * Monte le visualiseur Three.js dans la vue d'asset demandée
  */
 function mount3DViewerForAsset(assetKey) {
+    if (!assetKey || assetKey.startsWith('asset-pack-')) return;
     init3DViewerCore();
     currentAssetKey = assetKey;
 
@@ -233,11 +236,13 @@ function mount3DViewerForAsset(assetKey) {
 
     // Créer et monter le modèle 3D adapté
     loadOrBuildAssetModel(assetKey);
+    start3DViewer();
     setTimeout(resize3DViewer, 50);
 }
 
 /**
- * Génère le modèle 3D procédural haute fidélité pour chaque asset
+/**
+ * Charge un fichier 3D personnalisé (si data-model="..." est renseigné dans le HTML) ou génère le modèle procédural
  */
 function loadOrBuildAssetModel(assetKey) {
     if (currentModel) {
@@ -245,12 +250,51 @@ function loadOrBuildAssetModel(assetKey) {
         currentModel = null;
     }
 
-    // Modèle spécifique Palette.glb pour l'asset mobilier si disponible
-    if (assetKey === 'asset-mobilier-interieur') {
+    if (assetKey === 'asset-mobilier-interieur' || assetKey === 'project-pallet-3d') {
+        const pageView = document.getElementById(assetKey);
+        const customPath = pageView ? pageView.getAttribute('data-model') : '';
+        if (customPath && customPath.trim() !== '') {
+            loadExternal3DFile(customPath.trim(), assetKey, () => {
+                buildPaletteModel();
+            });
+            return;
+        }
         buildPaletteModel();
         return;
     }
 
+    // Détection d'un fichier 3D externe (.glb, .gltf, .obj, .fbx) via data-model dans le HTML
+    const pageView = document.getElementById(assetKey);
+    let customModelPath = '';
+    if (pageView) {
+        customModelPath = pageView.getAttribute('data-model') || 
+            (pageView.querySelector('.three-canvas-target') && pageView.querySelector('.three-canvas-target').getAttribute('data-model')) ||
+            (pageView.querySelector('.viewer-3d-viewport') && pageView.querySelector('.viewer-3d-viewport').getAttribute('data-model')) || '';
+    }
+
+    if (customModelPath && customModelPath.trim() !== '') {
+        const cleanPath = customModelPath.trim();
+        // Si ce modèle est déjà en cache pour cette vue, on l'affiche directement
+        if (currentModel && currentModel.userData && currentModel.userData.sourcePath === cleanPath) {
+            fitCameraToObject(currentModel);
+            return;
+        }
+
+        loadExternal3DFile(cleanPath, assetKey, () => {
+            // En cas d'erreur ou fichier manquant, fallback élégant sur le modèle procédural
+            buildProceduralAssetModel(assetKey);
+        });
+        return;
+    }
+
+    // Aucun fichier spécifié : affichage du modèle 3D procédural
+    buildProceduralAssetModel(assetKey);
+}
+
+/**
+ * Génère le modèle 3D procédural haute fidélité pour chaque asset
+ */
+function buildProceduralAssetModel(assetKey) {
     const group = new THREE.Group();
     group.name = assetKey;
 
@@ -269,6 +313,8 @@ function loadOrBuildAssetModel(assetKey) {
     const travertineMat = new THREE.MeshStandardMaterial({ color: 0xded6c8, map: travTex, roughness: 0.9, metalness: 0.02 });
     const boucleMat = new THREE.MeshStandardMaterial({ color: 0xf0ece5, map: boucleTex, roughness: 0.95, metalness: 0.01 });
     const ceramicMat = new THREE.MeshStandardMaterial({ color: 0x383533, roughness: 0.85, metalness: 0.05 });
+    const glassMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.35, roughness: 0.1, transmission: 0.9 });
+    const cushionMat = new THREE.MeshStandardMaterial({ color: 0xe6dfd5, roughness: 0.9, metalness: 0.02 });
 
     function addMesh(geo, mat, x, y, z, rx = 0, ry = 0, rz = 0) {
         const mesh = new THREE.Mesh(geo, mat);
@@ -280,257 +326,346 @@ function loadOrBuildAssetModel(assetKey) {
         return mesh;
     }
 
+    // Fonctions de construction réutilisables
+    function makeChair(cx = 0, cz = 0, ry = 0, mat = oakMat) {
+        const cGroup = new THREE.Group();
+        cGroup.position.set(cx, 0, cz);
+        cGroup.rotation.y = ry;
+        const legGeo = new THREE.CylinderGeometry(0.018, 0.024, 0.5, 12);
+        [-0.2, 0.2].forEach(x => {
+            [-0.2, 0.2].forEach(z => {
+                const leg = new THREE.Mesh(legGeo, mat);
+                leg.position.set(x, 0.25, z);
+                cGroup.add(leg);
+            });
+        });
+        const seat = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.03, 0.46), mat);
+        seat.position.set(0, 0.51, 0);
+        const cushion = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.035, 0.42), cushionMat);
+        cushion.position.set(0, 0.535, 0);
+        cGroup.add(seat, cushion);
+        // Dossier
+        [-0.2, 0.2].forEach(x => {
+            const bp = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.4, 12), mat);
+            bp.position.set(x, 0.71, -0.2);
+            cGroup.add(bp);
+        });
+        const back = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.16, 0.02), mat);
+        back.position.set(0, 0.82, -0.2);
+        cGroup.add(back);
+        group.add(cGroup);
+        return cGroup;
+    }
+
+    function makeStool(cx = 0, cz = 0, mat = oakMat) {
+        const sGroup = new THREE.Group();
+        sGroup.position.set(cx, 0, cz);
+        const legGeo = new THREE.CylinderGeometry(0.016, 0.022, 0.75, 12);
+        [-0.16, 0.16].forEach(x => {
+            [-0.16, 0.16].forEach(z => {
+                const leg = new THREE.Mesh(legGeo, mat);
+                leg.position.set(x, 0.375, z);
+                sGroup.add(leg);
+            });
+        });
+        const seat = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.04, 0.38), mat);
+        seat.position.set(0, 0.77, 0);
+        const footrest = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.015, 0.36), blackMetalMat);
+        footrest.position.set(0, 0.25, 0);
+        sGroup.add(seat, footrest);
+        group.add(sGroup);
+        return sGroup;
+    }
+
     let badgeTitle = "Modèle 3D Actif";
 
-    switch (assetKey) {
-        case 'asset-structure-modulaire':
-            badgeTitle = "Structure Modulaire (32k tris)";
-            // 4 poteaux
-            const colGeo = new THREE.BoxGeometry(0.1, 1.8, 0.1);
-            [-0.8, 0.8].forEach(x => {
-                [-0.8, 0.8].forEach(z => {
-                    addMesh(colGeo, oakMat, x, 0.9, z);
-                    addMesh(new THREE.BoxGeometry(0.14, 0.06, 0.14), blackMetalMat, x, 0.03, z);
-                });
+    // Modèles Uniques
+    if (assetKey === 'asset-unique-01' || assetKey === 'asset-chaise-kurisu') {
+        badgeTitle = "Canapé modulaire en palettes de bois";
+        buildPaletteModel();
+        return;
+    } else if (assetKey === 'asset-unique-02' || assetKey === 'asset-table-kanso') {
+        badgeTitle = "Fauteuil individuel en palettes avec coussins";
+        addMesh(new THREE.BoxGeometry(0.7, 0.26, 0.45), travertineMat, 0, 0.13, 0);
+        addMesh(new THREE.BoxGeometry(1.4, 0.05, 0.75), darkWoodMat, 0, 0.28, 0);
+        addMesh(new THREE.BoxGeometry(1.36, 0.01, 0.71), glassMat, 0, 0.31, 0);
+        addMesh(new THREE.CylinderGeometry(0.07, 0.04, 0.06, 24), ceramicMat, 0.2, 0.35, 0.1);
+    } else if (assetKey === 'asset-unique-03' || assetKey === 'asset-banc-engawa') {
+        badgeTitle = "Canapé modulaire 3 places en palettes avec coussins";
+        [-0.6, 0.6].forEach(x => {
+            addMesh(new THREE.BoxGeometry(0.08, 0.65, 0.8), darkWoodMat, x, 0.325, 0);
+        });
+        addMesh(new THREE.BoxGeometry(1.3, 0.06, 0.7), oakMat, 0, 0.35, 0);
+        addMesh(new THREE.BoxGeometry(1.24, 0.1, 0.64), cushionMat, 0, 0.42, 0);
+        const back = addMesh(new THREE.BoxGeometry(1.24, 0.35, 0.08), cushionMat, 0, 0.68, -0.28, 0.18, 0, 0);
+    } else if (assetKey === 'asset-unique-04') {
+        badgeTitle = "Canapé d'angle en L en palettes avec coussins";
+        [-0.32, 0.32].forEach(x => {
+            [-0.32, 0.32].forEach(z => {
+                addMesh(new THREE.BoxGeometry(0.05, 1.02, 0.05), blackMetalMat, x, 0.51, z);
             });
-            // Poutres supérieures
-            addMesh(new THREE.BoxGeometry(1.7, 0.1, 0.1), oakMat, 0, 1.75, -0.8);
-            addMesh(new THREE.BoxGeometry(1.7, 0.1, 0.1), oakMat, 0, 1.75, 0.8);
-            addMesh(new THREE.BoxGeometry(0.1, 0.1, 1.7), oakMat, -0.8, 1.75, 0);
-            addMesh(new THREE.BoxGeometry(0.1, 0.1, 1.7), oakMat, 0.8, 1.75, 0);
-            // Solivage toit
-            for (let i = -0.6; i <= 0.6; i += 0.3) {
-                addMesh(new THREE.BoxGeometry(0.04, 0.06, 1.6), oakMat, i, 1.8, 0);
-            }
-            // Panneau verre toit translucide
-            const glassMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.35, roughness: 0.1, transmission: 0.9 });
-            addMesh(new THREE.BoxGeometry(1.7, 0.015, 1.7), glassMat, 0, 1.85, 0);
-            break;
-
-        case 'asset-chaise-kurisu':
-            badgeTitle = "Chaise Kurisu (18.5k tris)";
-            // 4 pieds effilés
-            const legGeo = new THREE.CylinderGeometry(0.02, 0.028, 0.52, 16);
-            addMesh(legGeo, oakMat, -0.22, 0.26, -0.22);
-            addMesh(legGeo, oakMat, 0.22, 0.26, -0.22);
-            addMesh(legGeo, oakMat, -0.24, 0.26, 0.24);
-            addMesh(legGeo, oakMat, 0.24, 0.26, 0.24);
-            // Assise tressée
-            const seatMat = new THREE.MeshStandardMaterial({ color: 0xceb48e, map: woodNat, roughness: 0.85 });
-            addMesh(new THREE.BoxGeometry(0.5, 0.035, 0.48), seatMat, 0, 0.51, 0);
-            // Montants dossier
-            const backPostGeo = new THREE.CylinderGeometry(0.022, 0.022, 0.45, 16);
-            addMesh(backPostGeo, oakMat, -0.22, 0.72, -0.22, 0.08, 0, 0);
-            addMesh(backPostGeo, oakMat, 0.22, 0.72, -0.22, 0.08, 0, 0);
-            // Dossier courbé
-            const backCurveGeo = new THREE.TorusGeometry(0.3, 0.03, 12, 24, Math.PI);
-            addMesh(backCurveGeo, oakMat, 0, 0.86, -0.15, Math.PI / 2, 0, Math.PI);
-            // Bande tressée dossier
-            addMesh(new THREE.BoxGeometry(0.42, 0.15, 0.025), seatMat, 0, 0.78, -0.24);
-            break;
-
-        case 'asset-table-kanso':
-            badgeTitle = "Table Basse Kanso (12.4k tris)";
-            // Socle monolithique travertin
-            addMesh(new THREE.BoxGeometry(0.75, 0.28, 0.45), travertineMat, 0, 0.14, 0);
-            // Plateau noyer chanfreiné
-            addMesh(new THREE.BoxGeometry(1.5, 0.06, 0.8), darkWoodMat, 0, 0.31, 0);
-            // Bol de thé zen
-            const bowlGeo = new THREE.CylinderGeometry(0.07, 0.04, 0.06, 24);
-            addMesh(bowlGeo, ceramicMat, 0.2, 0.37, 0.1);
-            break;
-
-        case 'asset-suspension-akari':
-            badgeTitle = "Suspension Akari (14.2k tris)";
-            // Abat-jour washi organique
-            const washiMat = new THREE.MeshStandardMaterial({
-                color: 0xfff7ea,
-                map: washiTex,
-                roughness: 0.85,
-                emissive: 0xffdfaa,
-                emissiveIntensity: 0.35,
-                side: THREE.DoubleSide
+        });
+        addMesh(new THREE.BoxGeometry(0.78, 0.02, 0.78), blackMetalMat, 0, 0.3, 0);
+        addMesh(new THREE.BoxGeometry(0.85, 0.04, 0.85), cedarMat, 0, 1.04, 0);
+        addMesh(new THREE.BoxGeometry(0.82, 0.01, 0.82), glassMat, 0, 1.065, 0);
+    } else if (assetKey === 'asset-unique-05') {
+        badgeTitle = "Module de canapé sans accoudoirs en palettes avec coussins";
+        [-0.36, 0.36].forEach(x => {
+            addMesh(new THREE.BoxGeometry(0.05, 0.55, 0.85), oakMat, x, 0.275, 0);
+        });
+        addMesh(new THREE.BoxGeometry(0.66, 0.12, 0.65), boucleMat, 0, 0.32, 0.05, -0.15, 0, 0);
+        addMesh(new THREE.BoxGeometry(0.66, 0.55, 0.12), boucleMat, 0, 0.58, -0.22, 0.25, 0, 0);
+    } else if (assetKey === 'asset-unique-06') {
+        badgeTitle = "Méridienne / Chaise longue en palettes avec coussins";
+        addMesh(new THREE.BoxGeometry(1.7, 0.25, 2.1), oakMat, 0, 0.125, 0);
+        addMesh(new THREE.BoxGeometry(1.55, 0.22, 1.95), cushionMat, 0, 0.32, 0);
+        addMesh(new THREE.BoxGeometry(1.7, 0.75, 0.1), darkWoodMat, 0, 0.45, -1.02);
+        [-0.4, 0.4].forEach(x => {
+            addMesh(new THREE.BoxGeometry(0.5, 0.08, 0.35), boucleMat, x, 0.46, -0.7);
+        });
+    } else if (assetKey === 'asset-unique-07') {
+        badgeTitle = "Bureau de Travail Studio (12.8k tris)";
+        [-0.65, 0.65].forEach(x => {
+            addMesh(new THREE.BoxGeometry(0.04, 0.72, 0.65), blackMetalMat, x, 0.36, 0);
+        });
+        addMesh(new THREE.BoxGeometry(1.5, 0.04, 0.75), darkWoodMat, 0, 0.74, 0);
+        addMesh(new THREE.BoxGeometry(1.46, 0.01, 0.71), glassMat, 0, 0.765, 0);
+        addMesh(new THREE.BoxGeometry(0.35, 0.4, 0.55), oakMat, 0.48, 0.48, 0);
+    } else if (assetKey === 'asset-unique-08') {
+        badgeTitle = "Tabouret Haut de Bar (7.6k tris)";
+        makeStool(0, 0, oakMat);
+    } else if (assetKey === 'asset-unique-09') {
+        badgeTitle = "Bain de Soleil Transat Réglable (15.1k tris)";
+        addMesh(new THREE.BoxGeometry(0.65, 0.15, 1.95), cedarMat, 0, 0.12, 0);
+        addMesh(new THREE.BoxGeometry(0.62, 0.08, 1.25), cushionMat, 0, 0.22, 0.3);
+        addMesh(new THREE.BoxGeometry(0.62, 0.08, 0.65), cushionMat, 0, 0.35, -0.6, 0.35, 0, 0);
+    } else if (assetKey === 'asset-unique-10') {
+        badgeTitle = "Banquette Lounge Inclinable (13.9k tris)";
+        addMesh(new THREE.BoxGeometry(1.5, 0.18, 0.8), oakMat, 0, 0.09, 0);
+        addMesh(new THREE.BoxGeometry(1.45, 0.14, 0.72), cushionMat, 0, 0.24, 0);
+        addMesh(new THREE.BoxGeometry(1.45, 0.35, 0.12), cushionMat, 0, 0.45, -0.3, 0.15, 0, 0);
+    } else if (assetKey === 'asset-unique-11') {
+        badgeTitle = "Canapé Droit 2 Places (18.5k tris)";
+        addMesh(new THREE.BoxGeometry(1.65, 0.22, 0.85), darkWoodMat, 0, 0.11, 0);
+        addMesh(new THREE.BoxGeometry(1.45, 0.18, 0.75), boucleMat, 0, 0.28, 0.02);
+        addMesh(new THREE.BoxGeometry(1.45, 0.45, 0.18), boucleMat, 0, 0.52, -0.32);
+        [-0.78, 0.78].forEach(x => {
+            addMesh(new THREE.BoxGeometry(0.12, 0.45, 0.85), darkWoodMat, x, 0.32, 0);
+        });
+    } else if (assetKey === 'asset-unique-12') {
+        badgeTitle = "Fauteuil Club Large (12.4k tris)";
+        addMesh(new THREE.BoxGeometry(0.92, 0.2, 0.85), oakMat, 0, 0.1, 0);
+        addMesh(new THREE.BoxGeometry(0.72, 0.18, 0.7), cushionMat, 0, 0.28, 0.02);
+        addMesh(new THREE.BoxGeometry(0.72, 0.45, 0.16), cushionMat, 0, 0.52, -0.32);
+        [-0.42, 0.42].forEach(x => {
+            addMesh(new THREE.BoxGeometry(0.12, 0.45, 0.85), oakMat, x, 0.32, 0);
+        });
+    } else if (assetKey === 'asset-unique-13') {
+        badgeTitle = "Canapé Linéaire 3 Places XXL (24.8k tris)";
+        addMesh(new THREE.BoxGeometry(2.35, 0.22, 0.85), darkWoodMat, 0, 0.11, 0);
+        addMesh(new THREE.BoxGeometry(2.15, 0.18, 0.75), boucleMat, 0, 0.28, 0.02);
+        addMesh(new THREE.BoxGeometry(2.15, 0.45, 0.18), boucleMat, 0, 0.52, -0.32);
+        [-1.12, 1.12].forEach(x => {
+            addMesh(new THREE.BoxGeometry(0.12, 0.45, 0.85), darkWoodMat, x, 0.32, 0);
+        });
+    } else if (assetKey === 'asset-unique-14') {
+        badgeTitle = "Canapé d'Angle Méridienne (31.2k tris)";
+        addMesh(new THREE.BoxGeometry(2.4, 0.2, 0.85), darkWoodMat, 0, 0.1, 0);
+        addMesh(new THREE.BoxGeometry(0.85, 0.2, 1.1), darkWoodMat, 0.77, 0.1, 0.95);
+        addMesh(new THREE.BoxGeometry(2.2, 0.18, 0.75), cushionMat, 0, 0.26, 0);
+        addMesh(new THREE.BoxGeometry(0.75, 0.18, 1.0), cushionMat, 0.77, 0.26, 0.9);
+        addMesh(new THREE.BoxGeometry(2.3, 0.42, 0.15), cushionMat, 0, 0.5, -0.32);
+    } else if (assetKey === 'asset-unique-15') {
+        badgeTitle = "Méridienne Lounge Basse (16.7k tris)";
+        addMesh(new THREE.BoxGeometry(1.85, 0.16, 0.8), cedarMat, 0, 0.08, 0);
+        addMesh(new THREE.BoxGeometry(1.8, 0.14, 0.75), boucleMat, 0, 0.22, 0);
+        addMesh(new THREE.BoxGeometry(0.2, 0.38, 0.75), boucleMat, -0.8, 0.42, 0);
+    } else if (assetKey === 'asset-unique-16') {
+        badgeTitle = "Table à Manger 6 Places (11.6k tris)";
+        [-0.85, 0.85].forEach(x => {
+            [-0.38, 0.38].forEach(z => {
+                addMesh(new THREE.BoxGeometry(0.07, 0.72, 0.07), oakMat, x, 0.36, z);
             });
-            const shadeGeo = new THREE.DodecahedronGeometry(0.55, 2);
-            shadeGeo.scale(1.2, 0.8, 1.1);
-            addMesh(shadeGeo, washiMat, 0, 1.3, 0);
-            // Câble et fixation
-            addMesh(new THREE.CylinderGeometry(0.005, 0.005, 1.2, 8), blackMetalMat, 0, 2.0, 0);
-            addMesh(new THREE.CylinderGeometry(0.06, 0.06, 0.03, 16), blackMetalMat, 0, 2.5, 0);
-            // Anneaux bambou
-            const ringGeo = new THREE.TorusGeometry(0.58, 0.01, 8, 32);
-            addMesh(ringGeo, oakMat, 0, 1.3, 0, Math.PI / 2, 0, 0);
-            addMesh(ringGeo, oakMat, 0, 1.42, 0, Math.PI / 2, 0, 0);
-            addMesh(ringGeo, oakMat, 0, 1.18, 0, Math.PI / 2, 0, 0);
-            break;
-
-        case 'asset-claustra-kumiko':
-            badgeTitle = "Claustra Kumiko (46.8k tris)";
-            // 3 panneaux pliants
-            const panelOffsets = [
-                { x: -0.65, z: 0.1, r: -0.2 },
-                { x: 0, z: 0, r: 0 },
-                { x: 0.65, z: 0.1, r: 0.2 }
-            ];
-            panelOffsets.forEach(pos => {
-                const pGroup = new THREE.Group();
-                pGroup.position.set(pos.x, 0.9, pos.z);
-                pGroup.rotation.y = pos.r;
-                // Cadre extérieur
-                const frameMat = cedarMat;
-                const fW = 0.6, fH = 1.7, thick = 0.03;
-                const leftPost = new THREE.Mesh(new THREE.BoxGeometry(thick, fH, thick), frameMat);
-                leftPost.position.set(-fW / 2 + thick / 2, 0, 0);
-                const rightPost = new THREE.Mesh(new THREE.BoxGeometry(thick, fH, thick), frameMat);
-                rightPost.position.set(fW / 2 - thick / 2, 0, 0);
-                const topBar = new THREE.Mesh(new THREE.BoxGeometry(fW, thick, thick), frameMat);
-                topBar.position.set(0, fH / 2 - thick / 2, 0);
-                const bottomBar = new THREE.Mesh(new THREE.BoxGeometry(fW, thick, thick), frameMat);
-                bottomBar.position.set(0, -fH / 2 + thick / 2, 0);
-                pGroup.add(leftPost, rightPost, topBar, bottomBar);
-
-                // Treillis intérieur Kumiko
-                for (let y = -0.7; y <= 0.7; y += 0.1) {
-                    const hBar = new THREE.Mesh(new THREE.BoxGeometry(fW - 0.05, 0.008, 0.015), frameMat);
-                    hBar.position.set(0, y, 0);
-                    pGroup.add(hBar);
-                }
-                for (let x = -0.22; x <= 0.22; x += 0.1) {
-                    const vBar = new THREE.Mesh(new THREE.BoxGeometry(0.008, fH - 0.05, 0.015), frameMat);
-                    vBar.position.set(x, 0, 0);
-                    pGroup.add(vBar);
-                }
-                group.add(pGroup);
+        });
+        addMesh(new THREE.BoxGeometry(2.0, 0.05, 0.95), oakMat, 0, 0.74, 0);
+    } else if (assetKey === 'asset-unique-17' || assetKey === 'asset-enfilade-tatami') {
+        badgeTitle = "Enfilade Basse Tatami (17.9k tris)";
+        addMesh(new THREE.BoxGeometry(1.8, 0.5, 0.45), darkWoodMat, 0, 0.32, 0);
+        [-0.8, 0.8].forEach(x => {
+            addMesh(new THREE.BoxGeometry(0.04, 0.12, 0.35), blackMetalMat, x, 0.06, 0);
+        });
+        for (let x = -0.75; x <= 0.75; x += 0.08) {
+            addMesh(new THREE.BoxGeometry(0.02, 0.4, 0.015), oakMat, x, 0.32, 0.23);
+        }
+    } else if (assetKey === 'asset-unique-18' || assetKey === 'asset-etagere-sabi') {
+        badgeTitle = "Étagère Murale Sabi (13.4k tris)";
+        [-0.5, 0.5].forEach(x => {
+            addMesh(new THREE.BoxGeometry(0.03, 1.6, 0.28), blackMetalMat, x, 0.8, 0);
+        });
+        [0.2, 0.6, 1.0, 1.4].forEach(y => {
+            addMesh(new THREE.BoxGeometry(1.2, 0.03, 0.3), cedarMat, 0, y, 0);
+        });
+    } else if (assetKey === 'asset-unique-19') {
+        badgeTitle = "Lit Plateforme King Size XXL (27.5k tris)";
+        addMesh(new THREE.BoxGeometry(2.3, 0.2, 2.3), darkWoodMat, 0, 0.1, 0);
+        addMesh(new THREE.BoxGeometry(1.9, 0.24, 2.0), cushionMat, 0, 0.3, 0);
+        addMesh(new THREE.BoxGeometry(2.4, 0.8, 0.12), cedarMat, 0, 0.48, -1.1);
+        [-1.0, 1.0].forEach(x => {
+            addMesh(new THREE.BoxGeometry(0.35, 0.18, 0.35), darkWoodMat, x, 0.12, -0.6);
+        });
+    } else if (assetKey === 'asset-unique-20' || assetKey === 'asset-structure-modulaire') {
+        badgeTitle = "Structure Modulaire Pavillon (32k tris)";
+        [-0.8, 0.8].forEach(x => {
+            [-0.8, 0.8].forEach(z => {
+                addMesh(new THREE.BoxGeometry(0.1, 1.8, 0.1), oakMat, x, 0.9, z);
+                addMesh(new THREE.BoxGeometry(0.14, 0.06, 0.14), blackMetalMat, x, 0.03, z);
             });
-            break;
-
-        case 'asset-fauteuil-yugen':
-            badgeTitle = "Fauteuil Yūgen (26.4k tris)";
-            // Assise arrondie
-            const seatGeo = new THREE.CylinderGeometry(0.48, 0.44, 0.24, 32);
-            addMesh(seatGeo, boucleMat, 0, 0.32, 0);
-            // Dossier galbé enveloppant
-            const backCushionGeo = new THREE.TorusGeometry(0.46, 0.18, 16, 32, Math.PI * 0.85);
-            addMesh(backCushionGeo, boucleMat, 0, 0.65, 0.06, Math.PI / 2, 0, Math.PI * 1.07);
-            // 4 pieds courts en frêne
-            const fLegGeo = new THREE.CylinderGeometry(0.03, 0.02, 0.2, 16);
-            addMesh(fLegGeo, oakMat, -0.25, 0.1, -0.25, 0.15, 0, -0.15);
-            addMesh(fLegGeo, oakMat, 0.25, 0.1, -0.25, 0.15, 0, 0.15);
-            addMesh(fLegGeo, oakMat, -0.25, 0.1, 0.25, -0.15, 0, -0.15);
-            addMesh(fLegGeo, oakMat, 0.25, 0.1, 0.25, -0.15, 0, 0.15);
-            break;
-
-        case 'asset-banc-engawa':
-            badgeTitle = "Banc Engawa (9.6k tris)";
-            // 7 lattes de chêne
-            for (let i = 0; i < 7; i++) {
-                const z = (i - 3) * 0.065;
-                addMesh(new THREE.BoxGeometry(1.4, 0.035, 0.048), oakMat, 0, 0.46, z);
-            }
-            // 4 pieds
-            addMesh(new THREE.BoxGeometry(0.06, 0.44, 0.06), oakMat, -0.58, 0.22, -0.16);
-            addMesh(new THREE.BoxGeometry(0.06, 0.44, 0.06), oakMat, 0.58, 0.22, -0.16);
-            addMesh(new THREE.BoxGeometry(0.06, 0.44, 0.06), oakMat, -0.58, 0.22, 0.16);
-            addMesh(new THREE.BoxGeometry(0.06, 0.44, 0.06), oakMat, 0.58, 0.22, 0.16);
-            // Étagère basse
-            addMesh(new THREE.BoxGeometry(1.15, 0.025, 0.32), oakMat, 0, 0.16, 0);
-            // Équerres métal noir
-            addMesh(new THREE.BoxGeometry(0.07, 0.07, 0.07), blackMetalMat, -0.58, 0.43, -0.16);
-            addMesh(new THREE.BoxGeometry(0.07, 0.07, 0.07), blackMetalMat, 0.58, 0.43, -0.16);
-            addMesh(new THREE.BoxGeometry(0.07, 0.07, 0.07), blackMetalMat, -0.58, 0.43, 0.16);
-            addMesh(new THREE.BoxGeometry(0.07, 0.07, 0.07), blackMetalMat, 0.58, 0.43, 0.16);
-            break;
-
-        case 'asset-etagere-sabi':
-            badgeTitle = "Bibliothèque Sabi (21k tris)";
-            // 2 échelles métal noir
-            const ladderMat = blackMetalMat;
-            [-0.45, 0.45].forEach(x => {
-                addMesh(new THREE.BoxGeometry(0.02, 1.8, 0.02), ladderMat, x, 1.0, -0.15);
-                addMesh(new THREE.BoxGeometry(0.02, 1.8, 0.02), ladderMat, x, 1.0, 0.15);
+        });
+        addMesh(new THREE.BoxGeometry(1.7, 0.1, 0.1), oakMat, 0, 1.75, -0.8);
+        addMesh(new THREE.BoxGeometry(1.7, 0.1, 0.1), oakMat, 0, 1.75, 0.8);
+        addMesh(new THREE.BoxGeometry(0.1, 0.1, 1.7), oakMat, -0.8, 1.75, 0);
+        addMesh(new THREE.BoxGeometry(0.1, 0.1, 1.7), oakMat, 0.8, 1.75, 0);
+        for (let i = -0.6; i <= 0.6; i += 0.3) {
+            addMesh(new THREE.BoxGeometry(0.04, 0.06, 1.6), oakMat, i, 1.8, 0);
+        }
+    } else if (assetKey === 'asset-unique-21') {
+        badgeTitle = "Chaise Droite Dossier Haut (9.1k tris)";
+        makeChair(0, 0, 0, darkWoodMat);
+    } else if (assetKey === 'asset-unique-22') {
+        badgeTitle = "Table Basse Ronde Double Plateau (12.2k tris)";
+        addMesh(new THREE.CylinderGeometry(0.42, 0.42, 0.04, 32), oakMat, 0, 0.38, 0);
+        addMesh(new THREE.CylinderGeometry(0.35, 0.35, 0.02, 32), glassMat, 0, 0.2, 0);
+        for (let a = 0; a < Math.PI * 2; a += Math.PI / 2) {
+            addMesh(new THREE.CylinderGeometry(0.018, 0.018, 0.38, 12), blackMetalMat, Math.cos(a) * 0.35, 0.19, Math.sin(a) * 0.35);
+        }
+    } else if (assetKey === 'asset-unique-23') {
+        badgeTitle = "Banquette d'Entrée Engawa (11.5k tris)";
+        addMesh(new THREE.BoxGeometry(1.2, 0.04, 0.4), cedarMat, 0, 0.44, 0);
+        addMesh(new THREE.BoxGeometry(1.1, 0.02, 0.36), cedarMat, 0, 0.15, 0);
+        [-0.52, 0.52].forEach(x => {
+            [-0.15, 0.15].forEach(z => {
+                addMesh(new THREE.CylinderGeometry(0.018, 0.018, 0.44, 12), darkWoodMat, x, 0.22, z);
             });
-            // 4 tablettes chêne
-            const shelfHeights = [0.35, 0.75, 1.15, 1.55];
-            shelfHeights.forEach(y => {
-                addMesh(new THREE.BoxGeometry(1.2, 0.035, 0.36), oakMat, 0, y, 0);
+        });
+    } else if (assetKey === 'asset-unique-24') {
+        badgeTitle = "Mange-Debout Bistrot Épuré (8.9k tris)";
+        addMesh(new THREE.CylinderGeometry(0.35, 0.35, 0.03, 32), oakMat, 0, 1.03, 0);
+        addMesh(new THREE.CylinderGeometry(0.04, 0.04, 1.0, 16), blackMetalMat, 0, 0.51, 0);
+        addMesh(new THREE.CylinderGeometry(0.24, 0.24, 0.02, 32), blackMetalMat, 0, 0.01, 0);
+    } else if (assetKey === 'asset-unique-25') {
+        badgeTitle = "Lit Simple Gigogne (17.3k tris)";
+        addMesh(new THREE.BoxGeometry(1.05, 0.24, 2.05), oakMat, 0, 0.12, 0);
+        addMesh(new THREE.BoxGeometry(0.95, 0.2, 1.95), cushionMat, 0, 0.32, 0);
+        addMesh(new THREE.BoxGeometry(0.08, 0.55, 2.05), darkWoodMat, -0.5, 0.35, 0);
+    } else if (assetKey === 'asset-unique-26') {
+        badgeTitle = "Transat Double Spa (19.4k tris)";
+        addMesh(new THREE.BoxGeometry(1.35, 0.15, 1.95), darkWoodMat, 0, 0.12, 0);
+        [-0.32, 0.32].forEach(x => {
+            addMesh(new THREE.BoxGeometry(0.6, 0.08, 1.25), cushionMat, x, 0.22, 0.3);
+            addMesh(new THREE.BoxGeometry(0.6, 0.08, 0.65), cushionMat, x, 0.35, -0.6, 0.35, 0, 0);
+        });
+    } else if (assetKey === 'asset-unique-27' || assetKey === 'asset-fauteuil-yugen') {
+        badgeTitle = "Fauteuil Lounge Yūgen (15.8k tris)";
+        addMesh(new THREE.CylinderGeometry(0.42, 0.42, 0.22, 32), boucleMat, 0, 0.24, 0);
+        const back = addMesh(new THREE.TorusGeometry(0.38, 0.14, 16, 32, Math.PI), boucleMat, 0, 0.48, -0.05, Math.PI / 2, 0, 0);
+        [-0.25, 0.25].forEach(x => {
+            [-0.25, 0.25].forEach(z => {
+                addMesh(new THREE.CylinderGeometry(0.016, 0.022, 0.16, 12), brassMat, x, 0.08, z);
             });
-            // Livres 3D décoratifs
-            const bookColors = [0x9e5b42, 0x4a5d4e, 0x3b4a59, 0xd4c2a5];
-            bookColors.forEach((col, idx) => {
-                const bMat = new THREE.MeshStandardMaterial({ color: col, roughness: 0.8 });
-                addMesh(new THREE.BoxGeometry(0.04, 0.22, 0.16), bMat, -0.35 + idx * 0.045, 0.88, 0);
+        });
+    } else if (assetKey === 'asset-unique-28' || assetKey === 'asset-claustra-kumiko') {
+        badgeTitle = "Claustra Kumiko (21.6k tris)";
+        addMesh(new THREE.BoxGeometry(0.9, 1.9, 0.05), cedarMat, 0, 0.95, 0);
+        for (let i = 0.2; i < 1.8; i += 0.18) {
+            addMesh(new THREE.BoxGeometry(0.8, 0.015, 0.02), oakMat, 0, i, 0);
+        }
+    } else if (assetKey === 'asset-unique-29' || assetKey === 'asset-suspension-akari') {
+        badgeTitle = "Suspension Luminaire Akari (8.2k tris)";
+        const washiMat = new THREE.MeshStandardMaterial({ color: 0xfff7ea, map: washiTex, roughness: 0.85, emissive: 0xffdfaa, emissiveIntensity: 0.2 });
+        addMesh(new THREE.SphereGeometry(0.35, 24, 24), washiMat, 0, 0.85, 0);
+        addMesh(new THREE.CylinderGeometry(0.005, 0.005, 0.9, 8), blackMetalMat, 0, 1.4, 0);
+        addMesh(new THREE.CylinderGeometry(0.07, 0.07, 0.02, 16), brassMat, 0, 1.85, 0);
+    } else if (assetKey === 'asset-unique-30' || assetKey === 'asset-vase-kintsugi') {
+        badgeTitle = "Vase Céramique Kintsugi (6.7k tris)";
+        addMesh(new THREE.CylinderGeometry(0.12, 0.08, 0.45, 32), ceramicMat, 0, 0.23, 0);
+        addMesh(new THREE.TorusGeometry(0.125, 0.008, 12, 32), brassMat, 0, 0.32, 0, Math.PI / 2);
+    } else if (assetKey === 'asset-unique-31' || assetKey === 'asset-paravent-shibui') {
+        badgeTitle = "Paravent Shibui Tri-Volets (23.5k tris)";
+        [-0.55, 0, 0.55].forEach((x, idx) => {
+            const rot = (idx === 0 ? -0.2 : (idx === 2 ? 0.2 : 0));
+            addMesh(new THREE.BoxGeometry(0.5, 1.7, 0.03), oakMat, x, 0.85, (idx === 1 ? -0.05 : 0.05), 0, rot, 0);
+        });
+    }
+
+    // Sets Mobilier Prêts à l'Emploi
+    else if (assetKey === 'asset-set-01') {
+        badgeTitle = "Set Salle à Manger Table & 6 Chaises (58k tris)";
+        // Grande table
+        addMesh(new THREE.BoxGeometry(1.8, 0.05, 0.9), oakMat, 0, 0.72, 0);
+        [-0.75, 0.75].forEach(x => {
+            [-0.35, 0.35].forEach(z => {
+                addMesh(new THREE.BoxGeometry(0.06, 0.7, 0.06), oakMat, x, 0.35, z);
             });
-            // Petit vase céramique
-            addMesh(new THREE.CylinderGeometry(0.06, 0.04, 0.14, 16), ceramicMat, 0.25, 1.24, 0);
-            break;
-
-        case 'asset-enfilade-tatami':
-            badgeTitle = "Enfilade Tatami (31.2k tris)";
-            // Caisson extérieur noyer fumé
-            addMesh(new THREE.BoxGeometry(1.6, 0.65, 0.45), darkWoodMat, 0, 0.45, 0);
-            // Socle bas en retrait
-            addMesh(new THREE.BoxGeometry(1.48, 0.12, 0.38), darkWoodMat, 0, 0.06, 0);
-            // Portes coulissantes rainurées
-            const doorMat = new THREE.MeshStandardMaterial({ color: 0x382a20, map: woodDark, roughness: 0.65 });
-            addMesh(new THREE.BoxGeometry(0.76, 0.58, 0.02), doorMat, -0.39, 0.45, 0.23);
-            addMesh(new THREE.BoxGeometry(0.76, 0.58, 0.02), doorMat, 0.39, 0.45, 0.23);
-            // Poignées encastrées
-            addMesh(new THREE.BoxGeometry(0.02, 0.18, 0.01), brassMat, -0.7, 0.45, 0.24);
-            addMesh(new THREE.BoxGeometry(0.02, 0.18, 0.01), brassMat, 0.7, 0.45, 0.24);
-            break;
-
-        case 'asset-vase-kintsugi':
-            badgeTitle = "Vase Kintsugi (15.8k tris)";
-            // Silhouette organique tournée
-            const points = [];
-            for (let i = 0; i <= 20; i++) {
-                const t = i / 20;
-                const r = Math.sin(t * Math.PI) * 0.28 + 0.08 + (1 - t) * 0.06;
-                const y = t * 0.7;
-                points.push(new THREE.Vector2(r, y));
-            }
-            const vaseGeo = new THREE.LatheGeometry(points, 32);
-            addMesh(vaseGeo, ceramicMat, 0, 0.05, 0);
-            // Anneaux or Kintsugi
-            const veinGeo1 = new THREE.TorusGeometry(0.24, 0.008, 8, 32);
-            addMesh(veinGeo1, brassMat, 0, 0.42, 0, 0.3, 0.4, 0);
-            const veinGeo2 = new THREE.TorusGeometry(0.18, 0.006, 8, 32);
-            addMesh(veinGeo2, brassMat, 0, 0.22, 0, -0.4, 0.2, 0);
-            break;
-
-        case 'asset-paravent-shibui':
-            badgeTitle = "Paravent Shibui (23.5k tris)";
-            const pShibuiOffsets = [
-                { x: -0.6, z: 0.08, r: -0.22 },
-                { x: 0, z: 0, r: 0 },
-                { x: 0.6, z: 0.08, r: 0.22 }
-            ];
-            pShibuiOffsets.forEach(pos => {
-                const panel = new THREE.Group();
-                panel.position.set(pos.x, 0.9, pos.z);
-                panel.rotation.y = pos.r;
-                // Cadre
-                panel.add(new THREE.Mesh(new THREE.BoxGeometry(0.04, 1.75, 0.03), oakMat));
-                const pRight = new THREE.Mesh(new THREE.BoxGeometry(0.04, 1.75, 0.03), oakMat);
-                pRight.position.x = 0.54;
-                const pTop = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.04, 0.03), oakMat);
-                pTop.position.set(0.27, 0.85, 0);
-                const pBottom = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.04, 0.03), oakMat);
-                pBottom.position.set(0.27, -0.85, 0);
-                panel.add(pRight, pTop, pBottom);
-                // Lattes verticales fines
-                for (let lx = 0.04; lx < 0.52; lx += 0.035) {
-                    const slat = new THREE.Mesh(new THREE.BoxGeometry(0.012, 1.65, 0.02), oakMat);
-                    slat.position.set(lx, 0, 0);
-                    panel.add(slat);
-                }
-                group.add(panel);
+        });
+        // 6 Chaises autour de la table
+        [-0.5, 0, 0.5].forEach(x => {
+            makeChair(x, -0.65, 0, oakMat);
+            makeChair(x, 0.65, Math.PI, oakMat);
+        });
+    } else if (assetKey === 'asset-set-02') {
+        badgeTitle = "Set Mange-Debout & 4 Tabourets (38.5k tris)";
+        addMesh(new THREE.BoxGeometry(0.8, 0.04, 0.8), cedarMat, 0, 1.02, 0);
+        [-0.3, 0.3].forEach(x => {
+            [-0.3, 0.3].forEach(z => {
+                addMesh(new THREE.BoxGeometry(0.04, 1.0, 0.04), blackMetalMat, x, 0.5, z);
             });
-            break;
-
-        default:
-            badgeTitle = "Asset 3D";
-            addMesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), oakMat, 0, 0.4, 0);
+        });
+        makeStool(-0.55, 0, oakMat);
+        makeStool(0.55, 0, oakMat);
+        makeStool(0, -0.55, oakMat);
+        makeStool(0, 0.55, oakMat);
+    } else if (assetKey === 'asset-set-03') {
+        badgeTitle = "Set Salon Lounge Duo (41k tris)";
+        addMesh(new THREE.BoxGeometry(1.1, 0.04, 0.6), travertineMat, 0, 0.22, 0);
+        makeChair(-0.75, 0, Math.PI / 2, darkWoodMat);
+        makeChair(0.75, 0, -Math.PI / 2, darkWoodMat);
+    } else if (assetKey === 'asset-set-04') {
+        badgeTitle = "Set Banquette Lounge & Table Basse (36k tris)";
+        addMesh(new THREE.BoxGeometry(1.5, 0.16, 0.75), oakMat, 0, 0.08, -0.4);
+        addMesh(new THREE.BoxGeometry(1.45, 0.14, 0.7), cushionMat, 0, 0.22, -0.4);
+        addMesh(new THREE.BoxGeometry(0.8, 0.04, 0.8), darkWoodMat, 0, 0.18, 0.45);
+    } else if (assetKey === 'asset-set-05') {
+        badgeTitle = "Set Espace Bureau & Siège Studio (29.5k tris)";
+        addMesh(new THREE.BoxGeometry(1.3, 0.04, 0.65), oakMat, 0, 0.72, 0);
+        [-0.55, 0.55].forEach(x => {
+            addMesh(new THREE.BoxGeometry(0.04, 0.7, 0.55), blackMetalMat, x, 0.35, 0);
+        });
+        makeChair(0, 0.42, Math.PI, oakMat);
+    } else if (assetKey === 'asset-set-06') {
+        badgeTitle = "Set Balcon Bistrot Table & 2 Chaises (26k tris)";
+        addMesh(new THREE.CylinderGeometry(0.38, 0.38, 0.03, 32), cedarMat, 0, 0.72, 0);
+        addMesh(new THREE.CylinderGeometry(0.03, 0.03, 0.7, 16), blackMetalMat, 0, 0.35, 0);
+        makeChair(-0.55, 0, Math.PI / 2, oakMat);
+        makeChair(0.55, 0, -Math.PI / 2, oakMat);
+    } else if (assetKey === 'asset-set-07') {
+        badgeTitle = "Set Salon Méridienne & Table Verre (46k tris)";
+        addMesh(new THREE.BoxGeometry(1.8, 0.18, 0.8), darkWoodMat, 0, 0.09, -0.4);
+        addMesh(new THREE.BoxGeometry(0.8, 0.18, 0.9), darkWoodMat, 0.5, 0.09, 0.45);
+        addMesh(new THREE.BoxGeometry(1.7, 0.16, 0.7), boucleMat, 0, 0.25, -0.4);
+        addMesh(new THREE.BoxGeometry(0.7, 0.16, 0.8), boucleMat, 0.5, 0.25, 0.45);
+        addMesh(new THREE.BoxGeometry(0.8, 0.02, 0.5), glassMat, -0.3, 0.18, 0.4);
+    } else if (assetKey === 'asset-set-08') {
+        badgeTitle = "Set Solarium Duo Transats & Guéridon (37k tris)";
+        [-0.45, 0.45].forEach(x => {
+            addMesh(new THREE.BoxGeometry(0.58, 0.14, 1.8), cedarMat, x, 0.1, 0);
+            addMesh(new THREE.BoxGeometry(0.54, 0.08, 1.15), cushionMat, x, 0.2, 0.3);
+            addMesh(new THREE.BoxGeometry(0.54, 0.08, 0.6), cushionMat, x, 0.3, -0.55, 0.35, 0, 0);
+        });
+        addMesh(new THREE.CylinderGeometry(0.18, 0.18, 0.28, 24), travertineMat, 0, 0.14, 0);
+    } else {
+        badgeTitle = "Modèle 3D Japandi (" + assetKey + ")";
+        addMesh(new THREE.BoxGeometry(0.8, 0.5, 0.8), oakMat, 0, 0.25, 0);
+        addMesh(new THREE.BoxGeometry(0.75, 0.1, 0.75), cushionMat, 0, 0.55, 0);
     }
 
     scene.add(group);
@@ -540,9 +675,6 @@ function loadOrBuildAssetModel(assetKey) {
     updateAllModelBadges(badgeTitle);
 }
 
-/**
- * Palette en bois procédurale de référence (asset-mobilier-interieur)
- */
 function buildPaletteModel() {
     const group = new THREE.Group();
     group.name = 'ProceduralPalette';
@@ -613,7 +745,57 @@ function buildPaletteModel() {
 }
 
 /**
- * Tente de charger Palette.glb
+ * Charge un fichier 3D externe (.glb, .gltf, .obj, .fbx) spécifié dans data-model="..."
+ */
+function loadExternal3DFile(filePath, assetKey, onFallback) {
+    const filename = filePath.split('/').pop().split('\\').pop();
+    const ext = filename.split('.').pop().toLowerCase();
+
+    updateAllModelBadges(`Chargement de ${filename}...`);
+
+    const onLoadSuccess = (loadedSceneOrObject) => {
+        if (currentAssetKey !== assetKey) return; // Si la page a changé entre-temps
+        handleLoaded3DModel(loadedSceneOrObject, filename, filePath);
+    };
+
+    const onLoadError = (error) => {
+        console.warn(`[Viewer3D] Impossible de charger "${filePath}", utilisation du modèle 3D par défaut.`, error);
+        if (currentAssetKey === assetKey) {
+            if (typeof onFallback === 'function') {
+                onFallback();
+            }
+        }
+    };
+
+    try {
+        const cleanUrl = encodeURI(filePath).replace(/%2520/g, '%20');
+        if ((ext === 'glb' || ext === 'gltf') && typeof THREE.GLTFLoader !== 'undefined') {
+            const loader = new THREE.GLTFLoader();
+            loader.load(cleanUrl, (gltf) => {
+                onLoadSuccess(gltf.scene || gltf.scenes[0]);
+            }, (xhr) => {
+                if (xhr.lengthComputable && xhr.total > 0 && currentAssetKey === assetKey) {
+                    const percent = Math.round((xhr.loaded / xhr.total) * 100);
+                    updateAllModelBadges(`Chargement ${filename} (${percent}%)...`);
+                }
+            }, onLoadError);
+        } else if (ext === 'obj' && typeof THREE.OBJLoader !== 'undefined') {
+            const loader = new THREE.OBJLoader();
+            loader.load(cleanUrl, onLoadSuccess, undefined, onLoadError);
+        } else if (ext === 'fbx' && typeof THREE.FBXLoader !== 'undefined') {
+            const loader = new THREE.FBXLoader();
+            loader.load(cleanUrl, onLoadSuccess, undefined, onLoadError);
+        } else {
+            console.warn(`[Viewer3D] Format "${ext}" non supporté pour "${filePath}". Formats acceptés : .glb, .gltf, .obj, .fbx`);
+            onLoadError(new Error('Format non supporté'));
+        }
+    } catch (err) {
+        onLoadError(err);
+    }
+}
+
+/**
+ * Tente de charger Palette.glb (compatibilité historique)
  */
 function loadDefaultPaletteModel() {
     if (typeof THREE.GLTFLoader === 'undefined') return;
@@ -621,7 +803,7 @@ function loadDefaultPaletteModel() {
         const gltfLoader = new THREE.GLTFLoader();
         gltfLoader.load('models/Palette.glb', (gltf) => {
             if (currentAssetKey === 'asset-mobilier-interieur') {
-                handleLoaded3DModel(gltf.scene, 'Palette.glb');
+                handleLoaded3DModel(gltf.scene, 'Palette.glb', 'models/Palette.glb');
             }
         }, undefined, () => {});
     } catch (e) {}
@@ -630,7 +812,7 @@ function loadDefaultPaletteModel() {
 /**
  * Traite et affiche le modèle 3D chargé
  */
-function handleLoaded3DModel(object, filename) {
+function handleLoaded3DModel(object, filename, filePath = '') {
     if (!object) return;
     if (currentModel) scene.remove(currentModel);
 
@@ -644,10 +826,65 @@ function handleLoaded3DModel(object, filename) {
             }
             child.castShadow = true;
             child.receiveShadow = true;
+
+            // Correction automatique des matériaux pour éliminer les bugs de transparence (alphaMode: BLEND de Blender)
+            const mats = Array.isArray(child.material) ? child.material : [child.material];
+            mats.forEach((mat) => {
+                if (!mat) return;
+
+                const matName = (mat.name || '').toLowerCase();
+                const isGlass = matName.includes('glass') || matName.includes('verre') || matName.includes('vitre');
+                const isDecal = matName.includes('epal') || matName.includes('stamp') || matName.includes('logo') || matName.includes('decal');
+                const isFabric = matName.includes('fabric') || matName.includes('tissu') || matName.includes('coussin') || matName.includes('cotton') || matName.includes('seat');
+
+                if (isGlass) {
+                    // Véritable verre transparent
+                    mat.transparent = true;
+                    mat.opacity = mat.opacity < 1 ? mat.opacity : 0.35;
+                    mat.depthWrite = false;
+                } else if (isDecal) {
+                    // Logo / Sticker découpé (ex: marquage EPAL) avec découpe alpha nette sans bug de tri
+                    mat.transparent = true;
+                    mat.alphaTest = 0.3;
+                    mat.depthWrite = true;
+                    mat.depthTest = true;
+                    mat.side = THREE.DoubleSide;
+                    child.renderOrder = 1;
+                } else {
+                    // Objets solides (Tissus, Coussins, Bois, Métal, Cuir, etc.)
+                    // Blender exporte souvent alphaMode="BLEND" sur les textures même quand l'objet est 100% opaque.
+                    // On force l'opacité et l'écriture dans le Z-Buffer pour éliminer toute transparence indésirable.
+                    mat.transparent = false;
+                    mat.depthWrite = true;
+                    mat.depthTest = true;
+                    mat.alphaTest = 0;
+                    mat.opacity = 1.0;
+                    // DoubleSide indispensable pour les coussins/tissus dont certaines normales ou plis sont tournés vers l'intérieur
+                    mat.side = THREE.DoubleSide;
+                    mat.shadowSide = THREE.FrontSide;
+                    child.renderOrder = 0;
+
+                    if (isFabric) {
+                        // Les tissus et coussins doivent être doux et mats : éliminer tout metalness parasite
+                        mat.metalness = 0.0;
+                        if (mat.roughness === undefined || mat.roughness < 0.75) {
+                            mat.roughness = 0.85;
+                        }
+                    }
+                }
+
+                // Filtrage anisotrope pour un rendu net des textures sous tous les angles
+                if (mat.map && renderer) {
+                    mat.map.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 8);
+                }
+                mat.needsUpdate = true;
+            });
         }
     });
 
-    applyRealisticMaterialsToModel(object);
+    object.userData = object.userData || {};
+    object.userData.sourcePath = filePath;
+
     scene.add(object);
     currentModel = object;
     fitCameraToObject(object);
@@ -657,7 +894,7 @@ function handleLoaded3DModel(object, filename) {
 }
 
 function applyRealisticMaterialsToModel(object) {
-    const woodTexture = getWoodTexture('natural');
+    const woodTexture = getProceduralTexture('natural');
     object.traverse((child) => {
         if (child.isMesh) {
             child.castShadow = true;
@@ -737,9 +974,11 @@ function switchAssetMediaMode(btnOrMode, maybeMode) {
         if (pageView) {
             mount3DViewerForAsset(pageView.id);
         }
+        start3DViewer();
     } else {
         if (viewport3D) viewport3D.classList.remove('active');
         if (viewportImg) viewportImg.classList.add('active');
+        stop3DViewer();
     }
 }
 
@@ -822,7 +1061,30 @@ function resize3DViewer() {
     }
 }
 
+let isAnimating = false;
+
+function start3DViewer() {
+    if (isAnimating) return;
+    isAnimating = true;
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+    animate();
+}
+
+function stop3DViewer() {
+    isAnimating = false;
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+}
+window.start3DViewer = start3DViewer;
+window.stop3DViewer = stop3DViewer;
+
 function animate() {
+    if (!isAnimating) return;
     animationFrameId = requestAnimationFrame(animate);
 
     if (controls) {
@@ -840,12 +1102,44 @@ function animate() {
 
 // Initialisation globale lorsque n'importe quelle vue du catalogue est affichée
 window.initOrResizeViewer3D = function(assetKey) {
-    if (assetKey && assetKey.startsWith('asset-')) {
+    if (assetKey && assetKey.startsWith('asset-pack-')) return;
+    if (assetKey && (assetKey.startsWith('asset-') || assetKey === 'project-pallet-3d')) {
         mount3DViewerForAsset(assetKey);
     } else {
         const activePageView = document.querySelector('.page-view[style*="block"]');
-        if (activePageView && activePageView.id.startsWith('asset-')) {
+        if (activePageView && (activePageView.id.startsWith('asset-') || activePageView.id === 'project-pallet-3d') && !activePageView.id.startsWith('asset-pack-')) {
             mount3DViewerForAsset(activePageView.id);
         }
     }
 };
+
+/**
+ * Changement de modèle interactif dans la section Projet EPAL 3D
+ */
+function switchPallet3DModel(modelPath, btn, modelName) {
+    const palletView = document.getElementById('project-pallet-3d');
+    if (!palletView) return;
+
+    palletView.setAttribute('data-model', modelPath);
+
+    if (btn) {
+        document.querySelectorAll('.pallet-model-picker-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    const titleEl = document.querySelector('.viewer-model-name');
+    if (titleEl) {
+        if (modelName) {
+            titleEl.textContent = modelName;
+        } else if (btn) {
+            titleEl.textContent = btn.textContent.trim() + ' 3D';
+        }
+    }
+
+    mount3DViewerForAsset('project-pallet-3d');
+
+    const filename = modelPath.split('/').pop().replace(/\.glb$/i, '');
+    updateAllModelBadges(filename);
+}
+window.switchPallet3DModel = switchPallet3DModel;
+
