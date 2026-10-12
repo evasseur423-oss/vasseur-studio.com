@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vasseur Studio | Portfolio & Conception 3D</title>
-    <link rel="stylesheet" href="css/style.css?v=3.3">
+    <link rel="stylesheet" href="css/style.css?v=3.4">
 </head>
 
 <body>
@@ -12036,6 +12036,34 @@
                             </div>
 
                             <div class="pallet-viewport-3d-box media-viewer-container">
+                                <!-- Écran d'activation à la demande pour alléger le chargement de la page -->
+                                <div id="pallet-viewer-cover" class="pallet-viewer-cover">
+                                    <div class="pallet-cover-backdrop"></div>
+                                    <div class="pallet-cover-content">
+                                        <div class="pallet-cover-badge">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M12 2l9 4.9v10.2L12 22l-9-4.9V6.9L12 2z"/>
+                                                <path d="M12 22V12"/>
+                                                <path d="M21 6.9l-9 5.1-9-5.1"/>
+                                            </svg>
+                                            <span>Visionneuse 3D Interactive</span>
+                                        </div>
+                                        <h3 class="pallet-cover-title">Explorer les Volumes en 3D</h3>
+                                        <p class="pallet-cover-desc">
+                                            Manipulez les modèles en temps réel, examinez les assemblages et observez la matière à 360&deg;.
+                                        </p>
+                                        <button type="button" class="pallet-cover-launch-btn" onclick="launchPallet3DViewer()">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polygon points="5 3 19 12 5 21 5 3"/>
+                                            </svg>
+                                            <span>Activer le visualiseur 3D</span>
+                                        </button>
+                                        <div class="pallet-cover-hint">
+                                            <span>Chargement interactif optimisé (modèles PBR &amp; ombres douces)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="viewer-3d-viewport active"
                                     style="width:100%; height:100%; position:relative;">
                                     <div class="three-canvas-target three-canvas-wrapper" data-model="models/Sofa 1.glb"
@@ -12296,8 +12324,8 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js" defer></script>
-    <script src="js/viewer3d.js?v=3.4" defer></script>
-    <script src="js/main.js?v=3.3" defer></script>
+    <script src="js/viewer3d.js?v=3.5" defer></script>
+    <script src="js/main.js?v=3.4" defer></script>
 </body>
 
 </html>

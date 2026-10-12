@@ -1342,6 +1342,22 @@ window.initOrResizeViewer3D = function(assetKey) {
     }
 };
 
+let isPalletViewerLaunched = false;
+
+/**
+ * Lance le visualiseur 3D interactif de la section Projet EPAL à la demande (lazy-load)
+ */
+function launchPallet3DViewer() {
+    isPalletViewerLaunched = true;
+    window.isPalletViewerLaunched = true;
+    const cover = document.getElementById('pallet-viewer-cover');
+    if (cover) {
+        cover.classList.add('hidden');
+    }
+    mount3DViewerForAsset('project-pallet-3d');
+}
+window.launchPallet3DViewer = launchPallet3DViewer;
+
 /**
  * Changement de modèle interactif dans la section Projet EPAL 3D
  */
@@ -1363,6 +1379,14 @@ function switchPallet3DModel(modelPath, btn, modelName) {
         } else if (btn) {
             titleEl.textContent = btn.textContent.trim() + ' 3D';
         }
+    }
+
+    // Si le visualiseur n'était pas encore lancé, masquer l'écran de couverture et activer
+    isPalletViewerLaunched = true;
+    window.isPalletViewerLaunched = true;
+    const cover = document.getElementById('pallet-viewer-cover');
+    if (cover) {
+        cover.classList.add('hidden');
     }
 
     mount3DViewerForAsset('project-pallet-3d');

@@ -91,11 +91,16 @@ function showView(viewId, options = {}) {
 
     // 8. Configuration d'affichage des médias (Photo HD par défaut pour les fiches 3D)
     if (viewId === 'project-pallet-3d') {
-        // Montage automatique de la vue 3D interactive pour le Projet EPAL 3D
-        if (typeof mount3DViewerForAsset === 'function') {
-            setTimeout(() => {
-                mount3DViewerForAsset('project-pallet-3d');
-            }, 60);
+        // Le visualiseur 3D de la page EPAL est activé à la demande (on-click) pour ne pas ralentir l'ouverture de la page.
+        // Si l'utilisateur l'a déjà lancé au cours de sa session, on relance le rendu Three.js.
+        if (typeof isPalletViewerLaunched !== 'undefined' && isPalletViewerLaunched) {
+            if (typeof start3DViewer === 'function') {
+                start3DViewer();
+            }
+        } else {
+            if (typeof stop3DViewer === 'function') {
+                stop3DViewer();
+            }
         }
     } else if (viewId.startsWith('asset-')) {
         const container = targetView.querySelector('.media-viewer-container');
