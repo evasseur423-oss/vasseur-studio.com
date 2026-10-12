@@ -128,7 +128,7 @@ function init3DViewerCore() {
 
     // 1. Scène
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf7f7f5);
+    scene.background = new THREE.Color(0xf8f7f5);
 
     // 2. Caméra
     camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
@@ -156,7 +156,7 @@ function init3DViewerCore() {
     controls.maxDistance = 25;
     controls.target.set(0, 0.35, 0);
 
-    // 5. Éclairage Studio
+    // 5. Éclairage Studio Doux et Chaud (~4000K)
     setupStudioLights();
 
     // 6. Sol avec ombres douces et grille
@@ -169,19 +169,22 @@ function init3DViewerCore() {
 }
 
 /**
- * Configure l'éclairage de studio architectural
+ * Configure l'éclairage de studio architectural doux et chaleureux (~4000 Kelvin)
  */
 function setupStudioLights() {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+    // Ambiance douce et chaleureuse pour déboucher les ombres avec nuance ivoire
+    const ambientLight = new THREE.AmbientLight(0xfff6ed, 0.72);
     scene.add(ambientLight);
 
-    const mainLight = new THREE.DirectionalLight(0xfffaee, 1.25);
-    mainLight.position.set(6, 10, 5);
+    // Lumière principale chaleureuse calibrée à ~4000K (lueur douce soleil / halogène studio)
+    const mainLight = new THREE.DirectionalLight(0xffe4cc, 1.15);
+    mainLight.position.set(5.5, 9, 5);
     mainLight.castShadow = true;
     mainLight.shadow.mapSize.width = 1024;
     mainLight.shadow.mapSize.height = 1024;
     mainLight.shadow.bias = -0.0001;
     mainLight.shadow.normalBias = 0.02;
+    mainLight.shadow.radius = 2.0; // Pénombre d'ombre douce et diffuse
     mainLight.shadow.camera.near = 0.5;
     mainLight.shadow.camera.far = 30;
     mainLight.shadow.camera.left = -4;
@@ -190,27 +193,29 @@ function setupStudioLights() {
     mainLight.shadow.camera.bottom = -4;
     scene.add(mainLight);
 
-    const fillLight = new THREE.DirectionalLight(0xdce7f5, 0.45);
-    fillLight.position.set(-6, 5, -5);
+    // Lumière de débouchage chaude (adoucit les contrastes sans teinte bleue froide)
+    const fillLight = new THREE.DirectionalLight(0xf6ede2, 0.38);
+    fillLight.position.set(-5, 4.5, -4.5);
     scene.add(fillLight);
 
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0xe2ded4, 0.5);
+    // Dôme hémisphérique doux (voûte ivoire chaude et rebond sol terre/bois)
+    const hemiLight = new THREE.HemisphereLight(0xfff3e5, 0xe2d9cb, 0.45);
     scene.add(hemiLight);
 }
 
 /**
- * Sol studio avec récepteur d'ombres
+ * Sol studio avec récepteur d'ombres douces
  */
 function setupGroundPlane() {
     const shadowPlaneGeo = new THREE.PlaneGeometry(30, 30);
-    const shadowPlaneMat = new THREE.ShadowMaterial({ opacity: 0.14 });
+    const shadowPlaneMat = new THREE.ShadowMaterial({ opacity: 0.12 });
     const shadowPlane = new THREE.Mesh(shadowPlaneGeo, shadowPlaneMat);
     shadowPlane.rotation.x = -Math.PI / 2;
     shadowPlane.position.y = 0;
     shadowPlane.receiveShadow = true;
     scene.add(shadowPlane);
 
-    const grid = new THREE.GridHelper(10, 20, 0xd0d0cc, 0xecece8);
+    const grid = new THREE.GridHelper(10, 20, 0xd2cfc8, 0xece9e3);
     grid.position.y = 0.001;
     scene.add(grid);
 }
@@ -1098,17 +1103,53 @@ function applyRealisticMaterialsToModel(object) {
 }
 
 /**
- * Cadrage et centrage de la caméra
+ * Calcule avec précision la boîte englobante réelle d'un modèle 3D
+ * à partir de ses sommets physiques (Float32Array) pour éliminer les artefacts
+ * d'orientation de boîtes AABB (qui faisaient léviter certains lits et modules au-dessus du sol).
+ */
+function computeExactWorldBox(object) {
+    if (!object) return new THREE.Box3();
+    const box = new THREE.Box3();
+    const v = new THREE.Vector3();
+    object.updateWorldMatrix(true, true);
+
+    object.traverse((child) => {
+        if (child.isMesh && child.geometry && child.geometry.attributes && child.geometry.attributes.position) {
+            child.updateWorldMatrix(true, true);
+            const pos = child.geometry.attributes.position;
+            const matrix = child.matrixWorld;
+            const count = pos.count;
+            // Échantillonnage précis : parcours tous les sommets si <= 10000, ou pas régulier si maillage très dense
+            const step = count > 10000 ? Math.ceil(count / 10000) : 1;
+            for (let i = 0; i < count; i += step) {
+                v.fromBufferAttribute(pos, i);
+                v.applyMatrix4(matrix);
+                box.expandByPoint(v);
+            }
+        }
+    });
+
+    if (box.isEmpty()) {
+        box.setFromObject(object);
+    }
+    return box;
+}
+
+/**
+ * Cadrage et centrage de la caméra avec pose exacte et naturelle au niveau du sol (Y = 0)
  */
 function fitCameraToObject(object, offset = 1.35) {
     if (!camera || !object) return;
-    const boundingBox = new THREE.Box3().setFromObject(object);
+    
+    // Calcul de la boîte englobante exacte au sommet près
+    const boundingBox = computeExactWorldBox(object);
     const center = new THREE.Vector3();
     const size = new THREE.Vector3();
 
     boundingBox.getCenter(center);
     boundingBox.getSize(size);
 
+    // Centrage horizontal (X et Z) et pose exacte au niveau du sol (Y = 0)
     object.position.x -= center.x;
     object.position.y -= boundingBox.min.y;
     object.position.z -= center.z;
