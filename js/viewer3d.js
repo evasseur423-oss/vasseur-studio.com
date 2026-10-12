@@ -247,6 +247,42 @@ function mount3DViewerForAsset(assetKey) {
 /**
  * Charge un fichier 3D personnalisé (si data-model="..." est renseigné dans le HTML) ou génère le modèle procédural
  */
+// Table de correspondance exacte des modèles 3D pour immuniser le site contre les fautes de frappe et la casse Linux
+const ASSET_EXACT_MODELS = {
+    'asset-unique-01': 'models/Sofa 1.glb',
+    'asset-unique-02': 'models/Sofa 2.glb',
+    'asset-unique-03': 'models/Sofa 3.glb',
+    'asset-unique-04': 'models/Sofa 4.glb',
+    'asset-unique-05': 'models/Sofa 5.glb',
+    'asset-unique-06': 'models/Sofa 6.glb',
+    'asset-unique-07': 'models/Bed 1.glb',
+    'asset-unique-08': 'models/Bed 2.glb',
+    'asset-unique-09': 'models/Single Bed 1.glb',
+    'asset-unique-10': 'models/Single Bed 2.glb',
+    'asset-unique-11': 'models/Bench 1.glb',
+    'asset-unique-12': 'models/Bench 2.glb',
+    'asset-unique-13': 'models/Chair 1.glb',
+    'asset-unique-14': 'models/Chair 2.glb',
+    'asset-unique-15': 'models/High Chair 1.glb',
+    'asset-unique-16': 'models/Large Bench 1.glb',
+    'asset-unique-17': 'models/Lounge 1.glb',
+    'asset-unique-18': 'models/Lounge 2.glb',
+    'asset-unique-19': 'models/Large Lounge 1.glb',
+    'asset-unique-20': 'models/Large Lounge 2.glb',
+    'asset-unique-21': 'models/XXL Lounge 1.glb',
+    'asset-unique-22': 'models/XXL Lounge 2.glb',
+    'asset-unique-23': 'models/Long chair 1.glb',
+    'asset-unique-24': 'models/Long Chair 2.glb',
+    'asset-unique-25': 'models/Table 1.glb',
+    'asset-unique-26': 'models/Table 2.glb',
+    'asset-unique-27': 'models/Low Table 1.glb',
+    'asset-unique-28': 'models/Low Table 2.glb',
+    'asset-unique-29': 'models/Desk table 1.glb',
+    'asset-unique-30': 'models/Big Table 1.glb',
+    'asset-unique-31': 'models/Big Table 2.glb',
+    'project-pallet-3d': 'models/Sofa 1.glb'
+};
+
 function loadOrBuildAssetModel(assetKey) {
     if (currentModel) {
         scene.remove(currentModel);
@@ -256,17 +292,14 @@ function loadOrBuildAssetModel(assetKey) {
     if (assetKey === 'asset-mobilier-interieur' || assetKey === 'project-pallet-3d') {
         const pageView = document.getElementById(assetKey);
         const customPath = pageView ? pageView.getAttribute('data-model') : '';
-        if (customPath && customPath.trim() !== '') {
-            loadExternal3DFile(customPath.trim(), assetKey, () => {
-                buildPaletteModel();
-            });
-            return;
-        }
-        buildPaletteModel();
+        const targetPath = (customPath && customPath.trim() !== '') ? customPath.trim() : 'models/Sofa 1.glb';
+        loadExternal3DFile(targetPath, assetKey, () => {
+            buildPaletteModel();
+        });
         return;
     }
 
-    // Détection d'un fichier 3D externe (.glb, .gltf, .obj, .fbx) via data-model dans le HTML
+    // Détection d'un fichier 3D externe (.glb, .gltf, .obj, .fbx)
     const pageView = document.getElementById(assetKey);
     let customModelPath = '';
     if (pageView) {
@@ -275,16 +308,19 @@ function loadOrBuildAssetModel(assetKey) {
             (pageView.querySelector('.viewer-3d-viewport') && pageView.querySelector('.viewer-3d-viewport').getAttribute('data-model')) || '';
     }
 
-    if (customModelPath && customModelPath.trim() !== '') {
-        const cleanPath = customModelPath.trim();
+    // Résolution sécurisée : dictionnaire garanti puis data-model
+    const exactPath = ASSET_EXACT_MODELS[assetKey];
+    const finalPath = exactPath || (customModelPath ? customModelPath.trim() : '');
+
+    if (finalPath) {
         // Si ce modèle est déjà en cache pour cette vue, on l'affiche directement
-        if (currentModel && currentModel.userData && currentModel.userData.sourcePath === cleanPath) {
+        if (currentModel && currentModel.userData && currentModel.userData.sourcePath === finalPath) {
             fitCameraToObject(currentModel);
             return;
         }
 
-        loadExternal3DFile(cleanPath, assetKey, () => {
-            // En cas d'erreur ou fichier manquant, fallback élégant sur le modèle procédural
+        loadExternal3DFile(finalPath, assetKey, () => {
+            // En cas d'erreur réseau, fallback élégant sur le modèle procédural
             buildProceduralAssetModel(assetKey);
         });
         return;
@@ -746,6 +782,8 @@ function buildPaletteModel() {
 
 // Instance partagée de DRACOLoader pour décompresser les maillages GLB optimisés
 let dracoLoaderInstance = null;
+let isDracoLoading = false;
+let dracoLoadCallbacks = [];
 
 function getDRACOLoader() {
     if (!dracoLoaderInstance && typeof THREE !== 'undefined' && typeof THREE.DRACOLoader !== 'undefined') {
@@ -759,6 +797,42 @@ function getDRACOLoader() {
         }
     }
     return dracoLoaderInstance;
+}
+
+/**
+ * Garantit que DRACOLoader est chargé, même s'il n'était pas dans le HTML initial
+ */
+function ensureDRACOLoader(callback) {
+    if (typeof THREE !== 'undefined' && typeof THREE.DRACOLoader !== 'undefined') {
+        if (callback) callback(getDRACOLoader());
+        return;
+    }
+
+    if (callback) dracoLoadCallbacks.push(callback);
+    if (isDracoLoading) return;
+    isDracoLoading = true;
+
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js';
+    script.onload = () => {
+        isDracoLoading = false;
+        const draco = getDRACOLoader();
+        const cbs = dracoLoadCallbacks.slice();
+        dracoLoadCallbacks = [];
+        cbs.forEach(cb => {
+            try { cb(draco); } catch (e) { console.error(e); }
+        });
+    };
+    script.onerror = (err) => {
+        isDracoLoading = false;
+        console.warn('[Viewer3D] Échec du chargement dynamique de DRACOLoader.js', err);
+        const cbs = dracoLoadCallbacks.slice();
+        dracoLoadCallbacks = [];
+        cbs.forEach(cb => {
+            try { cb(null); } catch (e) { console.error(e); }
+        });
+    };
+    document.head.appendChild(script);
 }
 
 /**
@@ -787,19 +861,20 @@ function loadExternal3DFile(filePath, assetKey, onFallback) {
     try {
         const cleanUrl = encodeURI(filePath).replace(/%2520/g, '%20');
         if ((ext === 'glb' || ext === 'gltf') && typeof THREE.GLTFLoader !== 'undefined') {
-            const loader = new THREE.GLTFLoader();
-            const dracoLoader = getDRACOLoader();
-            if (dracoLoader) {
-                loader.setDRACOLoader(dracoLoader);
-            }
-            loader.load(cleanUrl, (gltf) => {
-                onLoadSuccess(gltf.scene || gltf.scenes[0]);
-            }, (xhr) => {
-                if (xhr.lengthComputable && xhr.total > 0 && currentAssetKey === assetKey) {
-                    const percent = Math.round((xhr.loaded / xhr.total) * 100);
-                    updateAllModelBadges(`Chargement ${filename} (${percent}%)...`);
+            ensureDRACOLoader((dracoLoader) => {
+                const loader = new THREE.GLTFLoader();
+                if (dracoLoader) {
+                    loader.setDRACOLoader(dracoLoader);
                 }
-            }, onLoadError);
+                loader.load(cleanUrl, (gltf) => {
+                    onLoadSuccess(gltf.scene || gltf.scenes[0]);
+                }, (xhr) => {
+                    if (xhr.lengthComputable && xhr.total > 0 && currentAssetKey === assetKey) {
+                        const percent = Math.round((xhr.loaded / xhr.total) * 100);
+                        updateAllModelBadges(`Chargement ${filename} (${percent}%)...`);
+                    }
+                }, onLoadError);
+            });
         } else if (ext === 'obj' && typeof THREE.OBJLoader !== 'undefined') {
             const loader = new THREE.OBJLoader();
             loader.load(cleanUrl, onLoadSuccess, undefined, onLoadError);
