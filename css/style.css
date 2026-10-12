@@ -434,6 +434,14 @@ img[src$=".png"] {
     touch-action: none;
 }
 
+.viewer-3d-viewport .three-canvas-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 .three-canvas-wrapper:active {
     cursor: grabbing;
 }

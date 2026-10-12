@@ -237,7 +237,10 @@ function mount3DViewerForAsset(assetKey) {
     // Créer et monter le modèle 3D adapté
     loadOrBuildAssetModel(assetKey);
     start3DViewer();
+    resize3DViewer();
+    requestAnimationFrame(resize3DViewer);
     setTimeout(resize3DViewer, 50);
+    setTimeout(resize3DViewer, 150);
 }
 
 /**
@@ -739,9 +742,23 @@ function buildPaletteModel() {
 
     fitCameraToObject(group);
     updateAllModelBadges("Palette en bois 3D");
+}
 
-    // Tentative de chargement du fichier glb si disponible
-    loadDefaultPaletteModel();
+// Instance partagée de DRACOLoader pour décompresser les maillages GLB optimisés
+let dracoLoaderInstance = null;
+
+function getDRACOLoader() {
+    if (!dracoLoaderInstance && typeof THREE !== 'undefined' && typeof THREE.DRACOLoader !== 'undefined') {
+        try {
+            dracoLoaderInstance = new THREE.DRACOLoader();
+            // CDN officiel Google pour les décodeurs Draco WebAssembly / JS
+            dracoLoaderInstance.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
+            dracoLoaderInstance.setDecoderConfig({ type: 'js' });
+        } catch (e) {
+            console.warn('[Viewer3D] Impossible d\'initialiser DRACOLoader:', e);
+        }
+    }
+    return dracoLoaderInstance;
 }
 
 /**
@@ -771,6 +788,10 @@ function loadExternal3DFile(filePath, assetKey, onFallback) {
         const cleanUrl = encodeURI(filePath).replace(/%2520/g, '%20');
         if ((ext === 'glb' || ext === 'gltf') && typeof THREE.GLTFLoader !== 'undefined') {
             const loader = new THREE.GLTFLoader();
+            const dracoLoader = getDRACOLoader();
+            if (dracoLoader) {
+                loader.setDRACOLoader(dracoLoader);
+            }
             loader.load(cleanUrl, (gltf) => {
                 onLoadSuccess(gltf.scene || gltf.scenes[0]);
             }, (xhr) => {
@@ -975,6 +996,9 @@ function switchAssetMediaMode(btnOrMode, maybeMode) {
             mount3DViewerForAsset(pageView.id);
         }
         start3DViewer();
+        resize3DViewer();
+        setTimeout(resize3DViewer, 50);
+        setTimeout(resize3DViewer, 150);
     } else {
         if (viewport3D) viewport3D.classList.remove('active');
         if (viewportImg) viewportImg.classList.add('active');
@@ -1051,8 +1075,8 @@ function resize3DViewer() {
     const parent = renderer.domElement.parentElement;
     if (!parent) return;
 
-    const width = parent.clientWidth;
-    const height = parent.clientHeight;
+    const width = parent.clientWidth || parent.offsetWidth || (parent.parentElement ? parent.parentElement.clientWidth : 0);
+    const height = parent.clientHeight || parent.offsetHeight || width;
 
     if (width > 0 && height > 0) {
         camera.aspect = width / height;
