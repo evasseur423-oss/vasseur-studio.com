@@ -785,13 +785,97 @@ let dracoLoaderInstance = null;
 let isDracoLoading = false;
 let dracoLoadCallbacks = [];
 
+/**
+ * Extension pour supporter EXT_mesh_gpu_instancing dans Three.js r128 GLTFLoader.
+ * Reconstruit fidèlement toutes les instances GPU (palettes dupliquées, traverses, pieds)
+ * sous forme d'objets 3D complets avec textures, ombres et cadrage parfait.
+ */
+class GLTFMeshGpuInstancing {
+    constructor(parser) {
+        this.name = 'EXT_mesh_gpu_instancing';
+        this.parser = parser;
+    }
+
+    createNodeMesh(nodeIndex) {
+        const json = this.parser.json;
+        const nodeDef = json.nodes[nodeIndex];
+        if (!nodeDef.extensions || !nodeDef.extensions[this.name] || nodeDef.mesh === undefined) {
+            return null;
+        }
+
+        const meshDef = json.meshes[nodeDef.mesh];
+        for (const primitive of meshDef.primitives) {
+            if (primitive.mode !== 4 && primitive.mode !== 5 && primitive.mode !== 6 && primitive.mode !== undefined) {
+                return null;
+            }
+        }
+
+        const extensionDef = nodeDef.extensions[this.name];
+        const attributesDef = extensionDef.attributes;
+
+        const pending = [];
+        const attributes = {};
+        for (const key in attributesDef) {
+            pending.push(this.parser.getDependency('accessor', attributesDef[key]).then(accessor => {
+                attributes[key] = accessor;
+                return attributes[key];
+            }));
+        }
+
+        if (pending.length < 1) return null;
+
+        pending.push(this.parser.createNodeMesh(nodeIndex));
+        return Promise.all(pending).then(results => {
+            const nodeObject = results.pop();
+            const meshes = nodeObject.isGroup ? [...nodeObject.children] : [nodeObject];
+            const count = results[0].count;
+
+            const group = new THREE.Group();
+            group.name = nodeDef.name ? this.parser.createUniqueName(nodeDef.name) : 'instanced_group';
+
+            for (let i = 0; i < count; i++) {
+                const instanceNode = new THREE.Group();
+                instanceNode.name = (nodeDef.name || 'instance') + '_' + i;
+
+                if (attributes.TRANSLATION) {
+                    instanceNode.position.fromBufferAttribute(attributes.TRANSLATION, i);
+                }
+                if (attributes.ROTATION) {
+                    instanceNode.quaternion.fromBufferAttribute(attributes.ROTATION, i);
+                }
+                if (attributes.SCALE) {
+                    instanceNode.scale.fromBufferAttribute(attributes.SCALE, i);
+                }
+
+                for (const mesh of meshes) {
+                    const clonedMesh = mesh.clone();
+                    clonedMesh.castShadow = true;
+                    clonedMesh.receiveShadow = true;
+                    if (typeof this.parser.assignFinalMaterial === 'function') {
+                        this.parser.assignFinalMaterial(clonedMesh);
+                    }
+                    instanceNode.add(clonedMesh);
+                }
+                group.add(instanceNode);
+            }
+
+            return group;
+        });
+    }
+}
+
+function registerGLTFInstancingExtension(loader) {
+    if (!loader || typeof loader.register !== 'function') return;
+    loader.register(parser => new GLTFMeshGpuInstancing(parser));
+}
+
 function getDRACOLoader() {
     if (!dracoLoaderInstance && typeof THREE !== 'undefined' && typeof THREE.DRACOLoader !== 'undefined') {
         try {
             dracoLoaderInstance = new THREE.DRACOLoader();
-            // CDN officiel Google pour les décodeurs Draco WebAssembly / JS
-            dracoLoaderInstance.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.3/');
-            dracoLoaderInstance.setDecoderConfig({ type: 'js' });
+            // CDN officiel Google pour les décodeurs Draco WebAssembly / JS haute performance
+            dracoLoaderInstance.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+            dracoLoaderInstance.preload();
         } catch (e) {
             console.warn('[Viewer3D] Impossible d\'initialiser DRACOLoader:', e);
         }
@@ -866,6 +950,7 @@ function loadExternal3DFile(filePath, assetKey, onFallback) {
                 if (dracoLoader) {
                     loader.setDRACOLoader(dracoLoader);
                 }
+                registerGLTFInstancingExtension(loader);
                 loader.load(cleanUrl, (gltf) => {
                     onLoadSuccess(gltf.scene || gltf.scenes[0]);
                 }, (xhr) => {
@@ -897,11 +982,15 @@ function loadDefaultPaletteModel() {
     if (typeof THREE.GLTFLoader === 'undefined') return;
     try {
         const gltfLoader = new THREE.GLTFLoader();
-        gltfLoader.load('models/Palette.glb', (gltf) => {
-            if (currentAssetKey === 'asset-mobilier-interieur') {
-                handleLoaded3DModel(gltf.scene, 'Palette.glb', 'models/Palette.glb');
-            }
-        }, undefined, () => {});
+        ensureDRACOLoader((dracoLoader) => {
+            if (dracoLoader) gltfLoader.setDRACOLoader(dracoLoader);
+            registerGLTFInstancingExtension(gltfLoader);
+            gltfLoader.load('models/Palette.glb', (gltf) => {
+                if (currentAssetKey === 'asset-mobilier-interieur') {
+                    handleLoaded3DModel(gltf.scene, 'Palette.glb', 'models/Palette.glb');
+                }
+            }, undefined, () => {});
+        });
     } catch (e) {}
 }
 
