@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vasseur Studio | Portfolio & Conception 3D</title>
     <link rel="stylesheet" href="css/style.css?v=3.4">
+    <!-- Suivi des visiteurs Umami -->
+    <script defer src="https://cloud.umami.is/script.js"
+        data-website-id="1e3ee98e-bee7-4a45-b858-06744f19fb3d"></script>
 </head>
 
 <body>
@@ -44,6 +47,22 @@
                 <div class="carousel-column" id="projets-carousel">
                     <div class="carousel-header">Projets à la une</div>
                     <div class="carousel-slides">
+                        <div class="carousel-item">
+                            <div class="img-frame">
+                                <span class="badge-under-construction"><span class="status-dot"></span>En
+                                    construction</span>
+                                <img src="images/half_above_the_sea_interior.jpg"
+                                    alt="HALF ABOVE THE SEA - En construction" loading="lazy" decoding="async">
+                            </div>
+                            <div class="item-caption">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="caption-text">HALF ABOVE THE SEA</span>
+                                    <span class="tag-construction-inline">En construction</span>
+                                </div>
+                                <button class="view-project-btn"
+                                    onclick="showView('project-half-above-the-sea')">Découvrir</button>
+                            </div>
+                        </div>
                         <div class="carousel-item">
                             <div class="img-frame"><img src="images/kaza_kaz_cover.webp" alt="KAZA KAZ" loading="lazy"
                                     decoding="async"></div>
@@ -260,6 +279,21 @@
         <div id="view-projets-grid" class="page-view" style="display: none;">
             <h1 class="page-title">Index des projets</h1>
             <div class="projects-grid">
+
+                <div class="grid-item" onclick="showView('project-half-above-the-sea')">
+                    <div class="grid-img-container" style="position: relative;">
+                        <span class="badge-under-construction"><span class="status-dot"></span>En construction</span>
+                        <img src="images/half_above_the_sea_interior.jpg" alt="HALF ABOVE THE SEA - En construction"
+                            loading="lazy" decoding="async">
+                    </div>
+                    <div class="grid-item-title">
+                        HALF ABOVE THE SEA
+                        <span class="tag-construction-inline">En construction</span>
+                    </div>
+                    <div class="grid-item-meta">Concours international &bull; Indonésie &bull; développement en cours
+                    </div>
+                </div>
+
 
                 <div class="grid-item" onclick="showView('project-kaza-kaz')">
                     <div class="grid-img-container"><img src="images/kaza_kaz_cover1.webp" alt="KAZA KAZ" loading="lazy"
@@ -11646,6 +11680,997 @@
         <!-- ========================================================================== -->
         <!-- PAGE PROJET : EPAL — ÉCOSYSTÈME, MODÉLISATION & MOBILIER MODULAIRE -->
         <!-- ========================================================================== -->
+        <!-- PAGE PROJET : HALF ABOVE THE SEA — CONCOURS TERRAVIVA (TOROSIAJE, INDONESIE) -->
+        <!-- ========================================================================== -->
+        <div id="project-half-above-the-sea" class="page-view" style="display: none;">
+            <div class="project-detail-wrapper">
+                <button type="button" class="back-button" onclick="showView('view-projets-grid')">&larr; Retour à
+                    l'index</button>
+
+                <!-- ========================================================================== -->
+                <!-- ÉCRAN EN CONSTRUCTION (PROJET EN COURS DE MISE À JOUR) -->
+                <!-- ========================================================================== -->
+                <div class="half-sea-construction-container"
+                    aria-label="Projet HALF ABOVE THE SEA en cours de mise à jour">
+                    <div class="half-sea-construction-hero">
+                        <img src="images/half_above_the_sea_interior.jpg" alt="HALF ABOVE THE SEA - En construction"
+                            loading="lazy" decoding="async">
+                        <div class="half-sea-construction-overlay">
+                            <div class="half-sea-construction-badges">
+                                <span class="half-sea-construction-badge-alert">
+                                    <span class="status-dot"></span>En construction
+                                </span>
+                                <span class="half-sea-construction-badge-context">
+                                    Concours International TerraViva &bull; Call of the Sea
+                                </span>
+                            </div>
+                            <h1 class="half-sea-construction-title">HALF ABOVE THE SEA</h1>
+                            <p class="half-sea-construction-sub">Torosiaje, Indonésie &bull; Concours international
+                                d’architecture</p>
+                        </div>
+                    </div>
+                    <div class="half-sea-construction-body">
+                        <div class="half-sea-construction-status-pill">
+                            <span class="pulse-indicator"></span>
+                            Mise à jour en cours
+                        </div>
+                        <p class="half-sea-construction-text">
+                            La page de présentation, la documentation architecturale et les schémas techniques de ce
+                            projet sont actuellement en cours de développement.
+                        </p>
+                        <p class="half-sea-construction-text" style="color: var(--text-muted, #666);">
+                            Les élévations structurelles, le modèle interactif de marée et les détails d'intégration
+                            vernaculaire seront bientôt disponibles.
+                        </p>
+                        <div class="half-sea-construction-actions">
+                            <button type="button" class="half-sea-btn-primary" onclick="showView('view-projets-grid')">
+                                &larr; Explorer les autres projets
+                            </button>
+                            <button type="button" class="half-sea-btn-secondary" onclick="showView('view-home')">
+                                Retour à l'accueil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONTENU DU PROJET CONSERVÉ (PROVISOIREMENT MASQUÉ) -->
+                <div class="half-sea-editorial-layout" style="display: none;" aria-hidden="true">
+                    <!-- En-tête / Hero du projet -->
+                    <section class="half-sea-header" aria-label="En-tête HALF ABOVE THE SEA">
+                        <div class="half-sea-header-media">
+                            <img src="images/half_above_the_sea_interior.jpg"
+                                alt="HALF ABOVE THE SEA perspective intérieure et vue sur l'océan" loading="lazy"
+                                decoding="async">
+                        </div>
+                        <div class="half-sea-header-meta-bar">
+                            <div class="half-sea-header-title-block">
+                                <span class="half-sea-badge">Concours International TerraViva &bull; Call of the
+                                    Sea</span>
+                                <h1 class="detail-title">HALF ABOVE THE SEA</h1>
+                                <div class="detail-meta-tags">Torosiaje, Indonésie &bull; Retraite marine communautaire
+                                    &bull; Architecture sur pilotis &bull; 6-8 Hôtes</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Section 01 : Ancrage & Génie du Lieu -->
+                    <section class="half-sea-text-image">
+                        <div class="half-sea-text-block">
+                            <span class="half-sea-label">01 / Ancrage & Génie du Lieu</span>
+                            <h2>Torosiaje &amp; la mémoire des Nomades de la Mer</h2>
+                            <p>Établi dans les eaux calmes du golfe de Tomini à Sulawesi, le village aquatique de
+                                Torosiaje s’étend sur plus de 300 habitations montées sur de frêles pilotis en bois.
+                                Fondé par le peuple Bajau — navigateurs et plongeurs d'exception appelés « Sea Nomads »
+                                —, ce territoire unique fait de l'océan un espace de vie continu où la terre ferme n'est
+                                plus qu'un lointain horizon.</p>
+                            <p>Le projet <em>Half above the sea</em> prend racine dans cette symbiose millénaire. Plutôt
+                                que d'imposer un geste monumental exogène, la conception s'apparente à une greffe
+                                sensible, respectant la fragilité des mangroves protectrices et des herbiers marins qui
+                                ceinturent le site.</p>
+                            <p>L’intervention propose une forme d'hospitalité humble et immersive pour 6 à 8 voyageurs,
+                                pensée comme un refuge de contemplation et d'échange direct avec la communauté insulaire
+                                au rythme quotidien des marées.</p>
+                        </div>
+                        <div class="half-sea-image-block half-sea-cad-block">
+                            <img src="images/half_above_the_sea_elevation.webp"
+                                alt="Élévation filaire et structurelle sur pilotis du projet HALF ABOVE THE SEA"
+                                loading="lazy" decoding="async">
+                            <span class="half-sea-img-legend">Élévation architecturale — Trame structurelle sur pilotis
+                                &amp; toitures légères</span>
+                        </div>
+                    </section>
+
+                    <!-- Section 02 : Morphologie en Grappe & Vie Flottante -->
+                    <section class="half-sea-text-image reverse">
+                        <div class="half-sea-image-block">
+                            <img src="images/half_above_the_sea_lagoon.webp"
+                                alt="Perspective en contre-plongée depuis l'eau turquoise montrant les coursives et les pilotis"
+                                loading="lazy" decoding="async">
+                            <span class="half-sea-img-legend">Vue ras de l'eau — Anneau modulaire et transparence
+                                hydraulique</span>
+                        </div>
+                        <div class="half-sea-text-block">
+                            <span class="half-sea-label">02 / Morphologie &amp; Écosystème</span>
+                            <h2>Un archipel modulaire suspendu</h2>
+                            <p>Refusant le bloc unitaire fermé, <em>Half above the sea</em> s’organise en un chapelet de
+                                pavillons légers gravitant autour d'un bassin intérieur préservé. Cette géométrie
+                                rayonnante recrée l'intimité protectrice d'une crique tout en multipliant les percées
+                                visuelles vers le large.</p>
+                            <p>Les coursives et pontons en bois relient les cellules individuelles aux espaces communs
+                                partagés (salon de lecture, cuisine collective, salle à manger ouverte et plateformes de
+                                mise à l'eau). Chaque unité bénéficie d'un accès direct à l'eau permettant l'amarrage
+                                naturel des pirogues locales.</p>
+                            <p>Les pilotis réduisent l'empreinte au sol marin au strict minimum, laissant les courants
+                                côtiers et la faune marine circuler librement sous les planchers sans altérer la
+                                dynamique sédimentaire.</p>
+                        </div>
+                    </section>
+
+                    <!-- Section 03 : Peau Cinétique & Climat Tropical Passif -->
+
+
+                    <!-- Section 03 : Coupe Technique Interactive & Flottaison Amphibie (Compacte & Fidèle au modèle réel) -->
+                    <section class="half-sea-diagram-section" aria-label="Schéma technique interactif de flottaison">
+                        <div class="half-sea-diagram-card">
+                            <div class="half-sea-diagram-header-compact">
+                                <div class="half-sea-diagram-title-group">
+                                    <span class="half-sea-label" style="margin-bottom: 2px;">03 / Principe Mécanique
+                                        &bull; Flottaison Amphibie</span>
+                                    <h3>Coupe Technique Dynamique — Interaction des Marées</h3>
+                                </div>
+                                <div class="half-sea-badge-archimede">Seuil Archimède : 30% d'élévation</div>
+                            </div>
+
+                            <!-- Scène SVG Widescreen Haute Rigueur (960 x 430) — Fidèle à half_above_the_sea_interior.jpg -->
+                            <div class="half-sea-svg-wrapper-compact" id="half-sea-svg-wrapper">
+                                <div class="half-sea-diagram-tooltip" id="half-sea-diagram-tooltip"></div>
+                                <svg id="half-sea-svg" viewBox="0 0 960 430" preserveAspectRatio="xMidYMid meet"
+                                    aria-label="Coupe architecturale animée fidèle au module réel">
+                                    <defs>
+                                        <!-- Eau turquoise cristalline du lagon de Torosiaje (Sulawesi) -->
+                                        <linearGradient id="halfSeaTideWaterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="#14b8a6" stop-opacity="0.45" />
+                                            <stop offset="25%" stop-color="#0d9488" stop-opacity="0.58" />
+                                            <stop offset="65%" stop-color="#0f766e" stop-opacity="0.75" />
+                                            <stop offset="100%" stop-color="#115e59" stop-opacity="0.90" />
+                                        </linearGradient>
+
+                                        <!-- Crête lumineuse de l'eau avec reflets solaires -->
+                                        <linearGradient id="halfSeaWaterSurfaceGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#2dd4bf" stop-opacity="0.8" />
+                                            <stop offset="25%" stop-color="#99f6e4" stop-opacity="1" />
+                                            <stop offset="50%" stop-color="#5eead4" stop-opacity="0.85" />
+                                            <stop offset="75%" stop-color="#ccfbf1" stop-opacity="1" />
+                                            <stop offset="100%" stop-color="#2dd4bf" stop-opacity="0.8" />
+                                        </linearGradient>
+
+                                        <!-- Poteaux & Pilotis en Bois de Fer (Ulin massif foncé imputrescible) -->
+                                        <linearGradient id="halfSeaColumnWoodGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#2c1e14" />
+                                            <stop offset="30%" stop-color="#4a3424" />
+                                            <stop offset="70%" stop-color="#583f2c" />
+                                            <stop offset="100%" stop-color="#2c1e14" />
+                                        </linearGradient>
+
+                                        <!-- Rendu 3D des facettes de la colonne centrale (fidèle au wireframe) -->
+                                        <linearGradient id="halfSeaFacetLeftGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#3d2717" />
+                                            <stop offset="100%" stop-color="#2a1a0e" />
+                                        </linearGradient>
+                                        <linearGradient id="halfSeaFacetCenterGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#805632" />
+                                            <stop offset="45%" stop-color="#996a3e" />
+                                            <stop offset="100%" stop-color="#7a512d" />
+                                        </linearGradient>
+                                        <linearGradient id="halfSeaFacetRightGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#56381e" />
+                                            <stop offset="100%" stop-color="#402814" />
+                                        </linearGradient>
+
+                                        <!-- Poutres horizontales du châssis en teck chaleureux -->
+                                        <linearGradient id="halfSeaBeamWoodGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="#7a4e2a" />
+                                            <stop offset="40%" stop-color="#9c683b" />
+                                            <stop offset="80%" stop-color="#6e421f" />
+                                            <stop offset="100%" stop-color="#523015" />
+                                        </linearGradient>
+
+                                        <!-- Fûts de flottaison cylindriques HORIZONTAUX -->
+                                        <linearGradient id="halfSeaHorizDrumGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="#181f26" />
+                                            <stop offset="15%" stop-color="#414e5c" />
+                                            <stop offset="38%" stop-color="#5a6b7d" />
+                                            <stop offset="68%" stop-color="#374350" />
+                                            <stop offset="92%" stop-color="#1a2026" />
+                                            <stop offset="100%" stop-color="#11161a" />
+                                        </linearGradient>
+
+                                        <!-- Cerclage doré des fûts -->
+                                        <linearGradient id="halfSeaDrumHoopGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="#785c28" />
+                                            <stop offset="50%" stop-color="#ffd57a" />
+                                            <stop offset="100%" stop-color="#785c28" />
+                                        </linearGradient>
+
+                                        <!-- Bardeaux de bois d'Ulin pour la toiture pavillonnaire -->
+                                        <linearGradient id="halfSeaRoofShingleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="#54331a" />
+                                            <stop offset="40%" stop-color="#422612" />
+                                            <stop offset="100%" stop-color="#2a1609" />
+                                        </linearGradient>
+
+                                        <!-- Pirogue traditionnelle Bajau en bois monoxyle -->
+                                        <linearGradient id="halfSeaPirogueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="#a4784a" />
+                                            <stop offset="35%" stop-color="#be9163" />
+                                            <stop offset="75%" stop-color="#8a5f35" />
+                                            <stop offset="100%" stop-color="#54371c" />
+                                        </linearGradient>
+
+                                        <!-- Fond marin sableux calcaire -->
+                                        <linearGradient id="halfSeaSeabedGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="#ece4d4" />
+                                            <stop offset="35%" stop-color="#e2d6c1" />
+                                            <stop offset="100%" stop-color="#c2b298" />
+                                        </linearGradient>
+                                    </defs>
+
+                                    <!-- 1. FOND MARIN SABLEUX & RÉCIF CORALLIEN -->
+                                    <path d="M 0 380 Q 160 376, 320 381 T 640 378 T 960 380 L 960 430 L 0 430 Z"
+                                        fill="url(#halfSeaSeabedGrad)" stroke="#b8aa94" stroke-width="1.2" />
+
+                                    <!-- Patates de corail & herbiers marins (détail récifal de Torosiaje) -->
+                                    <g class="half-sea-interactive-part"
+                                        data-tooltip="Platier corallien &amp; fonds marins préservés (Golfe de Tomini, Sulawesi)">
+                                        <path
+                                            d="M 35 383 C 42 371, 58 367, 68 372 C 78 364, 102 366, 114 375 C 126 368, 145 372, 154 383 Z"
+                                            fill="#998972" stroke="#756752" stroke-width="1.2" />
+                                        <ellipse cx="62" cy="375" rx="6" ry="3.5" fill="#b09f87" />
+                                        <ellipse cx="94" cy="371" rx="8" ry="4" fill="#b09f87" />
+                                        <ellipse cx="132" cy="376" rx="6" ry="3" fill="#b09f87" />
+                                        <path
+                                            d="M 160 381 Q 163 371, 160 365 M 163 381 Q 168 369, 165 363 M 167 381 Q 172 373, 171 367"
+                                            stroke="#4d7c54" stroke-width="1.5" stroke-linecap="round" fill="none"
+                                            opacity="0.75" />
+
+                                        <path
+                                            d="M 795 383 C 805 370, 825 366, 838 372 C 852 363, 878 365, 894 374 C 906 368, 924 372, 935 383 Z"
+                                            fill="#998972" stroke="#756752" stroke-width="1.2" />
+                                        <ellipse cx="832" cy="372" rx="7" ry="4" fill="#b09f87" />
+                                        <ellipse cx="866" cy="370" rx="9" ry="4.5" fill="#b09f87" />
+                                        <path d="M 780 381 Q 784 370, 781 364 M 784 381 Q 789 368, 787 362"
+                                            stroke="#4d7c54" stroke-width="1.5" stroke-linecap="round" fill="none"
+                                            opacity="0.75" />
+                                    </g>
+
+                                    <text x="24" y="415" font-size="9" fill="#807260" letter-spacing="1.5"
+                                        text-transform="uppercase" font-weight="600">Fond marin sableux &bull; Récif
+                                        corallien &bull; Torosiaje, Sulawesi</text>
+
+                                    <!-- Repères de marée (axe altimétrique vertical) -->
+                                    <g opacity="0.55">
+                                        <line x1="45" y1="225" x2="45" y2="380" stroke="#685d4f" stroke-width="0.9"
+                                            stroke-dasharray="2 3" />
+                                        <line x1="38" y1="225" x2="52" y2="225" stroke="#685d4f" stroke-width="1.4" />
+                                        <line x1="38" y1="309" x2="52" y2="309" stroke="#0e6b7a" stroke-width="1.4" />
+                                        <line x1="38" y1="345" x2="52" y2="345" stroke="#685d4f" stroke-width="1.4" />
+                                        <text x="34" y="229" font-size="9" fill="#3a3227" font-weight="600"
+                                            text-anchor="end">+ 2.8m (PM)</text>
+                                        <text x="34" y="313" font-size="8.5" fill="#0e6b7a" font-weight="600"
+                                            text-anchor="end">+ 0.85m</text>
+                                        <text x="34" y="349" font-size="9" fill="#3a3227" font-weight="600"
+                                            text-anchor="end">0.0m (BM)</text>
+                                    </g>
+
+                                    <!-- PILOTIS FIXES D'ANCRAGE EN BOIS D'ULIN -->
+                                    <!-- Pilotis Coursive Gauche -->
+                                    <g class="half-sea-interactive-part"
+                                        data-tooltip="Pilotis de fondation en Ulin pour la coursive d'accès">
+                                        <rect x="188" y="296" width="12" height="96" fill="url(#halfSeaColumnWoodGrad)"
+                                            stroke="#1a120b" stroke-width="1" />
+                                        <polygon points="182,298 206,298 206,306 200,314 182,306" fill="#241a12"
+                                            stroke="#120c07" stroke-width="0.9" />
+                                        <line x1="194" y1="338" x2="168" y2="380" stroke="#3d2b1f" stroke-width="2.6"
+                                            stroke-linecap="round" />
+                                    </g>
+
+                                    <!-- Pilotis Angle Gauche du Module avec console de repos (basse mer) -->
+                                    <g class="half-sea-interactive-part"
+                                        data-tooltip="Pilotis porteur d'angle avec console de repos (basse mer)">
+                                        <rect x="274" y="296" width="14" height="96" fill="url(#halfSeaColumnWoodGrad)"
+                                            stroke="#1a120b" stroke-width="1" />
+                                        <polygon points="268,298 294,298 294,306 288,314 268,306" fill="#241a12"
+                                            stroke="#120c07" stroke-width="0.9" />
+                                    </g>
+
+                                    <!-- Faisceau de pilotis d'ancrage et guidage central (exactement sous la colonne centrale du wireframe) -->
+                                    <g class="half-sea-interactive-part"
+                                        data-tooltip="Faisceau de pilotis d'ancrage en Ulin groupés sous la colonne centrale (guidage axial télescopique)">
+                                        <rect x="466" y="246" width="6" height="146" fill="url(#halfSeaColumnWoodGrad)"
+                                            stroke="#140d07" stroke-width="0.8" />
+                                        <rect x="473" y="246" width="6.5" height="146"
+                                            fill="url(#halfSeaColumnWoodGrad)" stroke="#140d07" stroke-width="0.8" />
+                                        <rect x="480.5" y="246" width="6.5" height="146"
+                                            fill="url(#halfSeaColumnWoodGrad)" stroke="#140d07" stroke-width="0.8" />
+                                        <rect x="488" y="246" width="6" height="146" fill="url(#halfSeaColumnWoodGrad)"
+                                            stroke="#140d07" stroke-width="0.8" />
+                                        <!-- Moises d'assemblage sous-marines -->
+                                        <rect x="464" y="310" width="32" height="5" fill="#140d07" rx="1" />
+                                        <rect x="464" y="352" width="32" height="5" fill="#140d07" rx="1" />
+                                    </g>
+
+                                    <!-- Pilotis Angle Droit du Module avec console de repos (basse mer) -->
+                                    <g class="half-sea-interactive-part"
+                                        data-tooltip="Pilotis porteur d'angle avec console de repos (basse mer)">
+                                        <rect x="686" y="296" width="14" height="96" fill="url(#halfSeaColumnWoodGrad)"
+                                            stroke="#1a120b" stroke-width="1" />
+                                        <polygon points="680,298 706,298 706,306 700,314 680,306" fill="#241a12"
+                                            stroke="#120c07" stroke-width="0.9" />
+                                    </g>
+
+                                    <!-- Pilotis Coursive Droite -->
+                                    <g class="half-sea-interactive-part"
+                                        data-tooltip="Pilotis de fondation en Ulin pour la coursive de liaison">
+                                        <rect x="764" y="296" width="12" height="96" fill="url(#halfSeaColumnWoodGrad)"
+                                            stroke="#1a120b" stroke-width="1" />
+                                        <polygon points="758,298 782,298 782,306 776,314 758,306" fill="#241a12"
+                                            stroke="#120c07" stroke-width="0.9" />
+                                        <line x1="770" y1="338" x2="796" y2="380" stroke="#3d2b1f" stroke-width="2.6"
+                                            stroke-linecap="round" />
+                                    </g>
+
+                                    <!-- 2. EAU DE MARÉE DYNAMIQUE -->
+                                    <rect id="half-sea-water-rect" x="0" y="345" width="960" height="85"
+                                        fill="url(#halfSeaTideWaterGrad)" />
+                                    <path id="half-sea-water-surface"
+                                        d="M 0 345 Q 60 343, 120 345 T 240 345 T 360 345 T 480 345 T 600 345 T 720 345 T 840 345 T 960 345"
+                                        fill="none" stroke="url(#halfSeaWaterSurfaceGrad)" stroke-width="2.6" />
+
+                                    <!-- Repère Seuil Archimède 30% -->
+                                    <g opacity="0.38">
+                                        <line x1="65" y1="309" x2="895" y2="309" stroke="#0e6b7a" stroke-width="0.9"
+                                            stroke-dasharray="3 3" />
+                                        <text x="900" y="312" font-size="8.5" fill="#0e6b7a" font-weight="600">Seuil
+                                            flottaison Archimède (30%)</text>
+                                    </g>
+
+                                    <!-- 3. PIROGUE TRADITIONNELLE BAJAU (FLOTTE DIRECTEMENT SUR L'EAU) -->
+                                    <g id="half-sea-floating-boat" class="half-sea-interactive-part"
+                                        data-tooltip="Pirogue traditionnelle Bajau en bois monoxyle (lepo) amarrée à l'échelle du module"
+                                        style="transition: transform 0.08s linear;">
+                                        <ellipse cx="130" cy="350" rx="55" ry="4" fill="#0b4e54" opacity="0.5" />
+                                        <path
+                                            d="M 62 342 C 82 347, 120 354, 170 352 C 181 350, 189 344, 193 338 C 185 342, 171 344, 130 344 C 90 344, 73 340, 62 342 Z"
+                                            fill="url(#halfSeaPirogueGrad)" stroke="#3e230f" stroke-width="1.3" />
+                                        <path
+                                            d="M 74 342 C 96 345, 126 345, 168 343 C 179 341, 159 340, 130 340 C 97 340, 80 341, 74 342 Z"
+                                            fill="#3a2211" />
+                                        <line x1="100" y1="341.5" x2="103" y2="344" stroke="#eedfc8"
+                                            stroke-width="1.6" />
+                                        <line x1="136" y1="341.5" x2="139" y2="344" stroke="#eedfc8"
+                                            stroke-width="1.6" />
+                                        <line x1="80" y1="340" x2="146" y2="342.5" stroke="#d5b48b"
+                                            stroke-width="1.5" />
+                                        <ellipse cx="80" cy="340" rx="4" ry="1.6" fill="#d5b48b" />
+                                        <ellipse cx="154" cy="342" rx="6" ry="2.5" fill="#2b6b55" opacity="0.8" />
+                                        <path d="M 182 340 Q 186 320, 188 296" fill="none" stroke="#e0c196"
+                                            stroke-width="1.3" stroke-dasharray="3 1.5" />
+                                    </g>
+
+                                    <!-- 4. GROUPE MOBILE : MODULE ARCHITECTURAL SUSPENDU (FIDÈLE AU MODÈLE DU PROJET) -->
+                                    <g id="half-sea-floating-structure" style="transition: transform 0.08s linear;">
+
+                                        <!-- Échelle d'accès en bois reliant la coursive à la pirogue -->
+                                        <g class="half-sea-interactive-part"
+                                            data-tooltip="Échelle d'accès en bois reliant la coursive flottante à la pirogue">
+                                            <line x1="184" y1="246" x2="167" y2="338" stroke="#54381d"
+                                                stroke-width="2.6" stroke-linecap="round" />
+                                            <line x1="189" y1="246" x2="172" y2="338" stroke="#54381d"
+                                                stroke-width="2.6" stroke-linecap="round" />
+                                            <line x1="182" y1="260" x2="187" y2="260" stroke="#cca273"
+                                                stroke-width="2" />
+                                            <line x1="179" y1="276" x2="184" y2="276" stroke="#cca273"
+                                                stroke-width="2" />
+                                            <line x1="176" y1="292" x2="181" y2="292" stroke="#cca273"
+                                                stroke-width="2" />
+                                            <line x1="173" y1="308" x2="178" y2="308" stroke="#cca273"
+                                                stroke-width="2" />
+                                            <line x1="170" y1="324" x2="175" y2="324" stroke="#cca273"
+                                                stroke-width="2" />
+                                        </g>
+
+                                        <!-- ========================================================
+                                             A. CHÂSSIS DE FLOTTAISON CONTINU À CROIX DE SAINT-ANDRÉ & FÛTS HORIZONTAUX
+                                             ======================================================== -->
+                                        <g class="half-sea-interactive-part"
+                                            data-tooltip="Châssis à treillis bois avec Croix de Saint-André continues &amp; fûts de flottaison cylindriques horizontaux">
+
+                                            <!-- Fûts étanches horizontaux calés dans l'épaisseur structurelle -->
+                                            <!-- Coursive Gauche -->
+                                            <g transform="translate(196, 254)">
+                                                <rect x="0" y="0" width="64" height="38" rx="4"
+                                                    fill="url(#halfSeaHorizDrumGrad)" stroke="#101518"
+                                                    stroke-width="1.2" />
+                                                <rect x="14" y="0" width="3" height="38"
+                                                    fill="url(#halfSeaDrumHoopGrad)" />
+                                                <rect x="47" y="0" width="3" height="38"
+                                                    fill="url(#halfSeaDrumHoopGrad)" />
+                                                <line x1="2" y1="10" x2="62" y2="10" stroke="#8da2b5" stroke-width="1"
+                                                    opacity="0.6" />
+                                                <line x1="2" y1="28" x2="62" y2="28" stroke="#161c22"
+                                                    stroke-width="1.2" />
+                                            </g>
+
+                                            <!-- Travée 1 Module (Gauche) -->
+                                            <g transform="translate(282, 254)">
+                                                <rect x="0" y="0" width="86" height="38" rx="4"
+                                                    fill="url(#halfSeaHorizDrumGrad)" stroke="#101518"
+                                                    stroke-width="1.2" />
+                                                <rect x="18" y="0" width="3" height="38"
+                                                    fill="url(#halfSeaDrumHoopGrad)" />
+                                                <rect x="65" y="0" width="3" height="38"
+                                                    fill="url(#halfSeaDrumHoopGrad)" />
+                                                <line x1="2" y1="10" x2="84" y2="10" stroke="#8da2b5" stroke-width="1"
+                                                    opacity="0.6" />
+                                                <line x1="2" y1="28" x2="84" y2="28" stroke="#161c22"
+                                                    stroke-width="1.2" />
+                                            </g>
+
+                                            <!-- Travée 2 Module (Centre-Gauche) -->
+                                            <g transform="translate(382, 254)">
+                                                <rect x="0" y="0" width="86" height="38" rx="4"
+                                                    fill="url(#halfSeaHorizDrumGrad)" stroke="#101518"
+                                                    stroke-width="1.2" />
+                                                <rect x="18" y="0" width="3" height="38"
+                                                    fill="url(#halfSeaDrumHoopGrad)" />
+                                                <rect x="65" y="0" width="3" height="38"
+                                                    fill="url(#halfSeaDrumHoopGrad)" />
+                                                <line x1="2" y1="10" x2="84" y2="10" stroke="#8da2b5" stroke-width="1"
+                                                    opacity="0.6" />
+                                                <line x1="2" y1="28" x2="84" y2="28" stroke="#161c22"
+                                                    stroke-width="1.2" />
+                                            </g>
+
+                                            <!-- Travée 3 Module (Centre-Droit) -->
+                                            <g transform="translate(506, 254)">
+                                                <rect x="0" y="0" width="86" height="38" rx="4"
+                                                    fill="url(#halfSeaHorizDrumGrad)" stroke="#101518"
+                                                    stroke-width="1.2" />
+                                                <rect x="18" y="0" width="3" height="38"
+                                                    fill="url(#halfSeaDrumHoopGrad)" />
+                                                <rect x="65" y="0" width="3" height="38"
+                                                    fill="url(#halfSeaDrumHoopGrad)" />
+                                                <line x1="2" y1="10" x2="84" y2="10" stroke="#8da2b5" stroke-width="1"
+                                                    opacity="0.6" />
+                                                <line x1="2" y1="28" x2="84" y2="28" stroke="#161c22"
+                                                    stroke-width="1.2" />
+                                            </g>
+
+                                            <!-- Travée 4 Module (Droit) -->
+                                            <g transform="translate(606, 254)">
+                                                <rect x="0" y="0" width="86" height="38" rx="4"
+                                                    fill="url(#halfSeaHorizDrumGrad)" stroke="#101518"
+                                                    stroke-width="1.2" />
+                                                <rect x="18" y="0" width="3" height="38"
+                                                    fill="url(#halfSeaDrumHoopGrad)" />
+                                                <rect x="65" y="0" width="3" height="38"
+                                                    fill="url(#halfSeaDrumHoopGrad)" />
+                                                <line x1="2" y1="10" x2="84" y2="10" stroke="#8da2b5" stroke-width="1"
+                                                    opacity="0.6" />
+                                                <line x1="2" y1="28" x2="84" y2="28" stroke="#161c22"
+                                                    stroke-width="1.2" />
+                                            </g>
+
+                                            <!-- Coursive Droite -->
+                                            <g transform="translate(712, 254)">
+                                                <rect x="0" y="0" width="64" height="38" rx="4"
+                                                    fill="url(#halfSeaHorizDrumGrad)" stroke="#101518"
+                                                    stroke-width="1.2" />
+                                                <rect x="14" y="0" width="3" height="38"
+                                                    fill="url(#halfSeaDrumHoopGrad)" />
+                                                <rect x="47" y="0" width="3" height="38"
+                                                    fill="url(#halfSeaDrumHoopGrad)" />
+                                                <line x1="2" y1="10" x2="62" y2="10" stroke="#8da2b5" stroke-width="1"
+                                                    opacity="0.6" />
+                                                <line x1="2" y1="28" x2="62" y2="28" stroke="#161c22"
+                                                    stroke-width="1.2" />
+                                            </g>
+
+                                            <!-- Lisses continues haute et basse du berceau (châssis bois) -->
+                                            <rect x="186" y="246" width="602" height="8"
+                                                fill="url(#halfSeaBeamWoodGrad)" stroke="#321e0f" stroke-width="1.2" />
+                                            <rect x="186" y="292" width="602" height="8"
+                                                fill="url(#halfSeaBeamWoodGrad)" stroke="#321e0f" stroke-width="1.2" />
+
+                                            <!-- Platelage supérieur en lames de teck continu -->
+                                            <line x1="182" y1="245" x2="792" y2="245" stroke="#edd0ab"
+                                                stroke-width="2.6" stroke-linecap="round" />
+                                            <!-- Rainures de platelage fidèles à la 3D -->
+                                            <g stroke="#3a2212" stroke-width="0.8" opacity="0.4">
+                                                <line x1="230" y1="244" x2="230" y2="246" />
+                                                <line x1="274" y1="244" x2="274" y2="246" />
+                                                <line x1="328" y1="244" x2="328" y2="246" />
+                                                <line x1="378" y1="244" x2="378" y2="246" />
+                                                <line x1="432" y1="244" x2="432" y2="246" />
+                                                <line x1="480" y1="244" x2="480" y2="246" />
+                                                <line x1="550" y1="244" x2="550" y2="246" />
+                                                <line x1="602" y1="244" x2="602" y2="246" />
+                                                <line x1="656" y1="244" x2="656" y2="246" />
+                                                <line x1="702" y1="244" x2="702" y2="246" />
+                                                <line x1="750" y1="244" x2="750" y2="246" />
+                                            </g>
+
+                                            <!-- Montants verticaux du treillis en bois -->
+                                            <g stroke="#321e0f" stroke-width="1.2" fill="#7a4f2c">
+                                                <rect x="190" y="246" width="6" height="54" />
+                                                <rect x="270" y="246" width="6" height="54" />
+                                                <rect x="374" y="246" width="6" height="54" />
+                                                <rect x="474" y="246" width="6" height="54" />
+                                                <rect x="500" y="246" width="6" height="54" />
+                                                <rect x="600" y="246" width="6" height="54" />
+                                                <rect x="700" y="246" width="6" height="54" />
+                                                <rect x="782" y="246" width="6" height="54" />
+                                            </g>
+
+                                            <!-- CROIX DE SAINT-ANDRÉ DANS CHAQUE TRAVÉE (FLUIDE ET CONTINUE COMME SUR L'ÉLÉVATION) -->
+                                            <g stroke="#56351a" stroke-width="2.2" stroke-linecap="round"
+                                                opacity="0.95">
+                                                <!-- Coursive G -->
+                                                <line x1="198" y1="254" x2="268" y2="292" />
+                                                <line x1="268" y1="254" x2="198" y2="292" />
+                                                <circle cx="233" cy="273" r="2.2" fill="#e8c274" stroke="#321e0f"
+                                                    stroke-width="0.8" />
+
+                                                <!-- Travée 1 Module G -->
+                                                <line x1="278" y1="254" x2="372" y2="292" />
+                                                <line x1="372" y1="254" x2="278" y2="292" />
+                                                <circle cx="325" cy="273" r="2.2" fill="#e8c274" stroke="#321e0f"
+                                                    stroke-width="0.8" />
+
+                                                <!-- Travée 2 Module Centre-G -->
+                                                <line x1="382" y1="254" x2="472" y2="292" />
+                                                <line x1="472" y1="254" x2="382" y2="292" />
+                                                <circle cx="427" cy="273" r="2.2" fill="#e8c274" stroke="#321e0f"
+                                                    stroke-width="0.8" />
+
+                                                <!-- Travée 3 Module Centre-D -->
+                                                <line x1="508" y1="254" x2="598" y2="292" />
+                                                <line x1="598" y1="254" x2="508" y2="292" />
+                                                <circle cx="553" cy="273" r="2.2" fill="#e8c274" stroke="#321e0f"
+                                                    stroke-width="0.8" />
+
+                                                <!-- Travée 4 Module D -->
+                                                <line x1="608" y1="254" x2="698" y2="292" />
+                                                <line x1="698" y1="254" x2="608" y2="292" />
+                                                <circle cx="653" cy="273" r="2.2" fill="#e8c274" stroke="#321e0f"
+                                                    stroke-width="0.8" />
+
+                                                <!-- Coursive D -->
+                                                <line x1="708" y1="254" x2="778" y2="292" />
+                                                <line x1="778" y1="254" x2="708" y2="292" />
+                                                <circle cx="743" cy="273" r="2.2" fill="#e8c274" stroke="#321e0f"
+                                                    stroke-width="0.8" />
+                                            </g>
+
+                                            <!-- Câblage marin enroulé & poterie végétale sur le deck -->
+                                            <path d="M 598 245 C 595 240, 602 238, 604 243 C 606 247, 599 250, 597 247"
+                                                fill="none" stroke="#deb887" stroke-width="1.8" />
+                                            <polygon points="695,245 703,245 702,238 696,238" fill="#c05c36"
+                                                stroke="#753018" stroke-width="0.8" />
+                                            <ellipse cx="699" cy="235" rx="3.5" ry="2.2" fill="#388e3c" />
+                                        </g>
+
+                                        <!-- ========================================================
+                                             B. POTEAU / COLONNE CANNELÉE CENTRALE (FIDÈLE AU FILAIRE DU PROJET)
+                                             CANNELURES TRIPLE FACETTES, TÊTE LIBRE, NE TOUCHE JAMAIS LE TOIT (DÉGAGEMENT 44PX)
+                                             ======================================================== -->
+                                        <g class="half-sea-interactive-part"
+                                            data-tooltip="Poteau / Colonne cannelée polygonale en teck massif (tête libre, dégagement de 44px sous la charpente)">
+                                            <!-- Facette gauche (ombrée) -->
+                                            <polygon points="466,246 475,246 475,170 466,170"
+                                                fill="url(#halfSeaFacetLeftGrad)" stroke="#1a120b" stroke-width="0.9" />
+                                            <!-- Facette centrale (éclairée pleine lumière) -->
+                                            <polygon points="475,246 488,246 488,170 475,170"
+                                                fill="url(#halfSeaFacetCenterGrad)" stroke="#1a120b"
+                                                stroke-width="0.9" />
+                                            <!-- Facette droite (demi-teinte) -->
+                                            <polygon points="488,246 496,246 496,170 488,170"
+                                                fill="url(#halfSeaFacetRightGrad)" stroke="#1a120b"
+                                                stroke-width="0.9" />
+                                            <!-- Chapiteau plat sculpté avec bague dorée -->
+                                            <rect x="463" y="166" width="36" height="5" fill="#24160c" stroke="#e8c274"
+                                                stroke-width="0.9" rx="1" />
+                                            <rect x="466" y="163" width="30" height="3" fill="#140c06" />
+                                            <!-- Cannelures verticales nettes -->
+                                            <line x1="475" y1="170" x2="475" y2="246" stroke="#eedcc3"
+                                                stroke-width="0.8" opacity="0.6" />
+                                            <line x1="488" y1="170" x2="488" y2="246" stroke="#22140a"
+                                                stroke-width="0.8" opacity="0.8" />
+                                        </g>
+
+                                        <!-- ========================================================
+                                             C. SUPERSTRUCTURE : POTEAUX DE FAÇADE, SABLIÈRES DÉDOUBLÉES & INTÉRIEUR
+                                             ======================================================== -->
+                                        <!-- Poteaux porteurs verticaux en teck massif reliant le plancher aux sablières -->
+                                        <g stroke="#1a120b" stroke-width="1.1" fill="url(#halfSeaColumnWoodGrad)">
+                                            <rect x="268" y="126" width="8" height="120" />
+                                            <rect x="372" y="126" width="8" height="120" />
+                                            <rect x="598" y="126" width="8" height="120" />
+                                            <rect x="696" y="126" width="8" height="120" />
+                                        </g>
+
+                                        <!-- Double sablière haute périphérique en bois (comme sur le dessin filaire) -->
+                                        <rect x="250" y="124" width="468" height="6" fill="url(#halfSeaBeamWoodGrad)"
+                                            stroke="#22150a" stroke-width="1.1" />
+                                        <rect x="250" y="132" width="468" height="6" fill="url(#halfSeaBeamWoodGrad)"
+                                            stroke="#22150a" stroke-width="1.1" />
+                                        <!-- Abouts de poutres saillants (tenons apparents) -->
+                                        <rect x="244" y="123" width="7" height="16" fill="#422915" stroke="#1f1208"
+                                            stroke-width="0.8" rx="0.5" />
+                                        <rect x="717" y="123" width="7" height="16" fill="#422915" stroke="#1f1208"
+                                            stroke-width="0.8" rx="0.5" />
+
+                                        <!-- Intérieur habité : perspective traversante vers le lagon & silhouette Bajau -->
+                                        <g opacity="0.85">
+                                            <line x1="380" y1="243" x2="595" y2="243" stroke="#482d16"
+                                                stroke-width="1.2" />
+                                            <!-- Hamac traditionnel suspendu entre les poteaux intérieurs -->
+                                            <path d="M 385 160 Q 435 195, 465 170" fill="none" stroke="#d5b58c"
+                                                stroke-width="1.4" stroke-dasharray="3 2" />
+                                            <path d="M 495 170 Q 535 195, 590 160" fill="none" stroke="#d5b58c"
+                                                stroke-width="1.4" stroke-dasharray="3 2" />
+                                            <g transform="translate(425, 185)" opacity="0.45">
+                                                <circle cx="5" cy="0" r="3.5" fill="#241a12" />
+                                                <path d="M 2 5 L 8 5 L 7 28 L 6 54 L 4 54 L 3 28 Z" fill="#241a12" />
+                                                <line x1="2" y1="12" x2="-2" y2="24" stroke="#241a12"
+                                                    stroke-width="1.2" />
+                                            </g>
+                                        </g>
+
+                                        <!-- Persiennes arrières planes à claire-voie en teck -->
+                                        <g transform="translate(282, 140)" opacity="0.75">
+                                            <rect x="0" y="0" width="84" height="102" fill="#2d190b" stroke="#1a0e06"
+                                                stroke-width="1" />
+                                            <g stroke="#deb078" stroke-width="1.6">
+                                                <line x1="4" y1="10" x2="80" y2="10" />
+                                                <line x1="4" y1="20" x2="80" y2="20" />
+                                                <line x1="4" y1="30" x2="80" y2="30" />
+                                                <line x1="4" y1="40" x2="80" y2="40" />
+                                                <line x1="4" y1="50" x2="80" y2="50" />
+                                                <line x1="4" y1="60" x2="80" y2="60" />
+                                                <line x1="4" y1="70" x2="80" y2="70" />
+                                                <line x1="4" y1="80" x2="80" y2="80" />
+                                                <line x1="4" y1="90" x2="80" y2="90" />
+                                                <line x1="4" y1="98" x2="80" y2="98" />
+                                            </g>
+                                        </g>
+                                        <g transform="translate(508, 140)" opacity="0.75">
+                                            <rect x="0" y="0" width="84" height="102" fill="#2d190b" stroke="#1a0e06"
+                                                stroke-width="1" />
+                                            <g stroke="#deb078" stroke-width="1.6">
+                                                <line x1="4" y1="10" x2="80" y2="10" />
+                                                <line x1="4" y1="20" x2="80" y2="20" />
+                                                <line x1="4" y1="30" x2="80" y2="30" />
+                                                <line x1="4" y1="40" x2="80" y2="40" />
+                                                <line x1="4" y1="50" x2="80" y2="50" />
+                                                <line x1="4" y1="60" x2="80" y2="60" />
+                                                <line x1="4" y1="70" x2="80" y2="70" />
+                                                <line x1="4" y1="80" x2="80" y2="80" />
+                                                <line x1="4" y1="90" x2="80" y2="90" />
+                                                <line x1="4" y1="98" x2="80" y2="98" />
+                                            </g>
+                                        </g>
+
+                                        <!-- ========================================================
+                                             D. LES GRANDS VOLETS PERSIENNÉS EN PAPILLON (SIGNATURE DU PROJET)
+                                             PROJECTION EN CHEVRON TRÈS MARQUÉE COMME SUR LE FILAIRE (< & >)
+                                             ======================================================== -->
+                                        <!-- VOLET GAUCHE EN PAPILLON / AUVENT PLIANT (<) -->
+                                        <g class="half-sea-interactive-part"
+                                            data-tooltip="Grand volet persienné articulé en auvent pliant (<) projeté vers l'extérieur pour la ventilation naturelle"
+                                            transform="translate(268, 138)">
+                                            <!-- Panneau supérieur incliné vers l'extérieur -->
+                                            <polygon points="0,0 -40,54 -30,54 8,0" fill="#5c3819" stroke="#2a180b"
+                                                stroke-width="1.2" />
+                                            <!-- Panneau inférieur incliné vers l'intérieur -->
+                                            <polygon points="-40,54 0,106 8,106 -30,54" fill="#5c3819" stroke="#2a180b"
+                                                stroke-width="1.2" />
+                                            <!-- Arêtes maîtresses et charnière médiane en saillie -->
+                                            <line x1="0" y1="0" x2="-40" y2="54" stroke="#261408" stroke-width="2.6" />
+                                            <line x1="-40" y1="54" x2="0" y2="106" stroke="#261408"
+                                                stroke-width="2.6" />
+                                            <circle cx="-36" cy="54" r="2.8" fill="#ebc678" stroke="#2a180b"
+                                                stroke-width="0.9" />
+
+                                            <!-- Lamelles persiennes inclinées régulières du volet gauche -->
+                                            <g stroke="#deb078" stroke-width="1.6" stroke-linecap="round">
+                                                <line x1="-3" y1="8" x2="-30" y2="48" />
+                                                <line x1="-7" y1="15" x2="-32" y2="49" />
+                                                <line x1="-11" y1="22" x2="-34" y2="50" />
+                                                <line x1="-15" y1="29" x2="-36" y2="51" />
+                                                <line x1="-19" y1="36" x2="-38" y2="52" />
+                                                <line x1="-23" y1="43" x2="-39" y2="53" />
+                                            </g>
+                                            <g stroke="#c79258" stroke-width="1.6" stroke-linecap="round">
+                                                <line x1="-3" y1="98" x2="-30" y2="59" />
+                                                <line x1="-7" y1="91" x2="-32" y2="58" />
+                                                <line x1="-11" y1="84" x2="-34" y2="57" />
+                                                <line x1="-15" y1="77" x2="-36" y2="56" />
+                                                <line x1="-19" y1="70" x2="-38" y2="55" />
+                                                <line x1="-23" y1="63" x2="-39" y2="54" />
+                                            </g>
+                                        </g>
+
+                                        <!-- VOLET DROIT EN PAPILLON / AUVENT PLIANT (>) (EXACTEMENT COMME SUR L'ÉLÉVATION FILAIRE) -->
+                                        <g class="half-sea-interactive-part"
+                                            data-tooltip="Grand volet persienné articulé en auvent pliant (>) projeté vers l'extérieur avec lames horizontales en teck"
+                                            transform="translate(700, 138)">
+                                            <!-- Panneau supérieur incliné vers l'extérieur -->
+                                            <polygon points="0,0 44,54 34,54 -8,0" fill="#5c3819" stroke="#2a180b"
+                                                stroke-width="1.2" />
+                                            <!-- Panneau inférieur incliné vers l'intérieur -->
+                                            <polygon points="44,54 0,106 -8,106 34,54" fill="#5c3819" stroke="#2a180b"
+                                                stroke-width="1.2" />
+                                            <!-- Arêtes maîtresses et charnière médiane en saillie -->
+                                            <line x1="0" y1="0" x2="44" y2="54" stroke="#261408" stroke-width="2.6" />
+                                            <line x1="44" y1="54" x2="0" y2="106" stroke="#261408" stroke-width="2.6" />
+                                            <circle cx="39" cy="54" r="2.8" fill="#ebc678" stroke="#2a180b"
+                                                stroke-width="0.9" />
+
+                                            <!-- Lames de persiennes débordantes sur la tranche comme sur le dessin filaire -->
+                                            <g stroke="#deb078" stroke-width="1.6" stroke-linecap="round">
+                                                <line x1="4" y1="8" x2="33" y2="48" />
+                                                <line x1="8" y1="15" x2="35" y2="49" />
+                                                <line x1="12" y1="22" x2="37" y2="50" />
+                                                <line x1="16" y1="29" x2="39" y2="51" />
+                                                <line x1="20" y1="36" x2="41" y2="52" />
+                                                <line x1="24" y1="43" x2="42" y2="53" />
+                                            </g>
+                                            <g stroke="#c79258" stroke-width="1.6" stroke-linecap="round">
+                                                <line x1="4" y1="98" x2="33" y2="59" />
+                                                <line x1="8" y1="91" x2="35" y2="58" />
+                                                <line x1="12" y1="84" x2="37" y2="57" />
+                                                <line x1="16" y1="77" x2="39" y2="56" />
+                                                <line x1="20" y1="70" x2="41" y2="55" />
+                                                <line x1="24" y1="63" x2="42" y2="54" />
+                                            </g>
+                                        </g>
+
+                                        <!-- ========================================================
+                                             E. TOITURE PAVILLONNAIRE IDENTIQUE AU DESSIN CAD (PIGNON, CROUPE & LATTES PARALLÈLES)
+                                             ======================================================== -->
+                                        <g class="half-sea-interactive-part"
+                                            data-tooltip="Toiture pavillonnaire en bardeaux d'Ulin avec pignon ventilé, coyaux débordants &amp; tirage d'air passif">
+
+                                            <!-- 1. SOUS-TOITURE & FERME DU PIGNON DROIT (triangulaire, exactement comme sur le filaire) -->
+                                            <!-- Fond sombre du pignon pour profondeur spatiale -->
+                                            <polygon points="590,126 663,75 736,126" fill="#22140b" stroke="#140b05"
+                                                stroke-width="1.2" />
+                                            <!-- Pannes longitudinales reliant les fermes -->
+                                            <line x1="238" y1="126" x2="590" y2="126" stroke="#4a2e16"
+                                                stroke-width="2.6" />
+                                            <line x1="255" y1="100" x2="626" y2="100" stroke="#4a2e16"
+                                                stroke-width="2" />
+                                            <line x1="272" y1="75" x2="663" y2="75" stroke="#4a2e16"
+                                                stroke-width="2.8" />
+
+                                            <!-- Claire-voie de ventilation horizontale dans le pignon -->
+                                            <g stroke="#deb078" stroke-width="1.6" opacity="0.95">
+                                                <line x1="648" y1="86" x2="678" y2="86" />
+                                                <line x1="636" y1="94" x2="690" y2="94" />
+                                                <line x1="624" y1="102" x2="702" y2="102" />
+                                                <line x1="612" y1="110" x2="714" y2="110" />
+                                                <line x1="600" y1="118" x2="726" y2="118" />
+                                            </g>
+
+                                            <!-- Ferme triangulaire du pignon (au premier plan) -->
+                                            <g stroke="#3a2010" stroke-width="2.2" fill="none">
+                                                <line x1="590" y1="126" x2="736" y2="126" />
+                                                <line x1="590" y1="126" x2="663" y2="75" />
+                                                <line x1="736" y1="126" x2="663" y2="75" />
+                                                <line x1="663" y1="75" x2="663" y2="126" stroke-width="2" />
+                                                <line x1="626" y1="101" x2="663" y2="120" stroke-width="1.6" />
+                                                <line x1="700" y1="101" x2="663" y2="120" stroke-width="1.6" />
+                                            </g>
+
+                                            <!-- 2. VERSANTS DE TOITURE (PLANS MASSIFS AVEC MATIÈRE & TEXTURE) -->
+                                            <!-- Croupe gauche vers coursive -->
+                                            <polygon points="272,75 238,126 194,126 218,75" fill="#351f10"
+                                                stroke="#160d06" stroke-width="1.1" />
+                                            <!-- Croupe droite arrière -->
+                                            <polygon points="663,75 736,126 758,126 690,75" fill="#2c1a0e"
+                                                stroke="#160d06" stroke-width="1.1" />
+                                            <!-- Versant principal trapézoïdal en bardeaux d'Ulin -->
+                                            <polygon points="272,75 663,75 590,126 238,126"
+                                                fill="url(#halfSeaRoofShingleGrad)" stroke="#160d06"
+                                                stroke-width="1.2" />
+
+                                            <!-- 3. CHEVRONS SAILLANTS APPARENTS (SOUS LES LATTES) -->
+                                            <g stroke="#7a4c26" stroke-width="2.4" stroke-linecap="round">
+                                                <line x1="280" y1="75" x2="246" y2="132" />
+                                                <line x1="360" y1="75" x2="326" y2="132" />
+                                                <line x1="440" y1="75" x2="406" y2="132" />
+                                                <line x1="520" y1="75" x2="486" y2="132" />
+                                                <line x1="600" y1="75" x2="566" y2="132" />
+                                                <!-- Bouts de chevrons biseautés saillants au bord de l'avant-toit -->
+                                                <rect x="243" y="130" width="4" height="4" fill="#2a1608"
+                                                    stroke="#120803" stroke-width="0.6" />
+                                                <rect x="323" y="130" width="4" height="4" fill="#2a1608"
+                                                    stroke="#120803" stroke-width="0.6" />
+                                                <rect x="403" y="130" width="4" height="4" fill="#2a1608"
+                                                    stroke="#120803" stroke-width="0.6" />
+                                                <rect x="483" y="130" width="4" height="4" fill="#2a1608"
+                                                    stroke="#120803" stroke-width="0.6" />
+                                                <rect x="563" y="130" width="4" height="4" fill="#2a1608"
+                                                    stroke="#120803" stroke-width="0.6" />
+                                            </g>
+
+                                            <!-- 4. LATTES DE BARDEAUX HORIZONTALES PARALLÈLES (IDENTIQUES AU DESSIN CAD) -->
+                                            <!-- Lignes claires ensoleillées -->
+                                            <g stroke="#e2c8aa" stroke-width="1.6" opacity="0.9" stroke-linecap="round">
+                                                <line x1="268" y1="82" x2="655" y2="82" />
+                                                <line x1="263" y1="89" x2="644" y2="89" />
+                                                <line x1="258" y1="96" x2="634" y2="96" />
+                                                <line x1="253" y1="103" x2="623" y2="103" />
+                                                <line x1="248" y1="110" x2="612" y2="110" />
+                                                <line x1="243" y1="117" x2="601" y2="117" />
+                                                <line x1="238" y1="124" x2="590" y2="124" />
+
+                                                <!-- Lattes sur la croupe gauche -->
+                                                <line x1="212" y1="82" x2="268" y2="82" />
+                                                <line x1="206" y1="89" x2="263" y2="89" />
+                                                <line x1="200" y1="96" x2="258" y2="96" />
+                                                <line x1="194" y1="103" x2="253" y2="103" />
+                                                <line x1="188" y1="110" x2="248" y2="110" />
+
+                                                <!-- Lattes sur la croupe droite -->
+                                                <line x1="670" y1="82" x2="702" y2="82" />
+                                                <line x1="680" y1="89" x2="712" y2="89" />
+                                                <line x1="690" y1="96" x2="722" y2="96" />
+                                                <line x1="700" y1="103" x2="732" y2="103" />
+                                                <line x1="710" y1="110" x2="742" y2="110" />
+                                            </g>
+                                            <!-- Ombres marquées sous chaque latte -->
+                                            <g stroke="#180e05" stroke-width="1.3" opacity="0.95">
+                                                <line x1="268" y1="84" x2="655" y2="84" />
+                                                <line x1="263" y1="91" x2="644" y2="91" />
+                                                <line x1="258" y1="98" x2="634" y2="98" />
+                                                <line x1="253" y1="105" x2="623" y2="105" />
+                                                <line x1="248" y1="112" x2="612" y2="112" />
+                                                <line x1="243" y1="119" x2="601" y2="119" />
+                                                <line x1="238" y1="126" x2="590" y2="126" />
+
+                                                <line x1="212" y1="84" x2="268" y2="84" />
+                                                <line x1="206" y1="91" x2="263" y2="91" />
+                                                <line x1="200" y1="98" x2="258" y2="98" />
+                                                <line x1="194" y1="105" x2="253" y2="105" />
+                                                <line x1="188" y1="112" x2="248" y2="112" />
+
+                                                <line x1="670" y1="84" x2="702" y2="84" />
+                                                <line x1="680" y1="91" x2="712" y2="91" />
+                                                <line x1="690" y1="98" x2="722" y2="98" />
+                                                <line x1="700" y1="105" x2="732" y2="105" />
+                                                <line x1="710" y1="112" x2="742" y2="112" />
+                                            </g>
+
+                                            <!-- 5. CRÊTE DE FAÎTAGE ET ARÊTIERS ÉCLAIRÉS -->
+                                            <line x1="218" y1="75" x2="663" y2="75" stroke="#dcb085" stroke-width="2.4"
+                                                stroke-linecap="round" />
+                                            <line x1="663" y1="75" x2="758" y2="126" stroke="#c09265" stroke-width="2"
+                                                stroke-linecap="round" />
+                                            <line x1="272" y1="75" x2="238" y2="126" stroke="#94653b" stroke-width="2"
+                                                stroke-linecap="round" />
+
+                                            <!-- Faitière ventilée protectrice sculptée au sommet -->
+                                            <polygon points="216,75 665,75 663,71 218,71" fill="#24150b"
+                                                stroke="#120904" stroke-width="0.9" />
+                                        </g>
+                                    </g> <!-- Fin half-sea-floating-structure -->
+                                </svg>
+                            </div>
+
+                            <!-- Contrôles compacts horizontaux (100% visible sans scroll) -->
+                            <div class="half-sea-controls-compact">
+                                <div class="half-sea-slider-group">
+                                    <label for="half-sea-tide-slider">Marée :</label>
+                                    <input type="range" class="half-sea-compact-slider" id="half-sea-tide-slider"
+                                        min="0" max="100" value="0" step="0.5" aria-label="Contrôle de la marée">
+                                    <span class="half-sea-val-num" id="half-sea-tide-val">0%</span>
+                                    <div id="half-sea-status-badge" class="half-sea-status-badge status-resting">
+                                        Appui sur pilotis (BM)
+                                    </div>
+                                </div>
+
+                                <div class="half-sea-buttons-group">
+                                    <button type="button" class="half-sea-btn-mini active"
+                                        onclick="setHalfSeaTide(0, this)">0% Basse Mer</button>
+                                    <button type="button" class="half-sea-btn-mini"
+                                        onclick="setHalfSeaTide(30, this)">30% Seuil Archimède</button>
+                                    <button type="button" class="half-sea-btn-mini"
+                                        onclick="setHalfSeaTide(65, this)">65% Mi-Marée</button>
+                                    <button type="button" class="half-sea-btn-mini"
+                                        onclick="setHalfSeaTide(100, this)">100% Pleine Mer</button>
+                                    <button type="button" class="half-sea-btn-mini" id="half-sea-play-cycle-btn"
+                                        onclick="toggleHalfSeaTideCycle()">▶ Cycle auto</button>
+                                </div>
+                            </div>
+
+                            <!-- Légende ultra-fine sur une seule ligne -->
+                            <div class="half-sea-compact-legend">
+                                <div class="half-sea-legend-item">
+                                    <span class="half-sea-legend-dot" style="background: #3e4d5c;"></span>
+                                    <span>Fûts étanches horizontaux</span>
+                                </div>
+                                <div class="half-sea-legend-item">
+                                    <span class="half-sea-legend-dot" style="background: #9c683b;"></span>
+                                    <span>Berceau treillis (Croix St-André)</span>
+                                </div>
+                                <div class="half-sea-legend-item">
+                                    <span class="half-sea-legend-dot" style="background: #ff7a29;"></span>
+                                    <span>Patins Gaïac (Guidage)</span>
+                                </div>
+                                <div class="half-sea-legend-item">
+                                    <span class="half-sea-legend-dot" style="background: #14b8a6;"></span>
+                                    <span>Lagon de marée</span>
+                                </div>
+                                <div class="half-sea-legend-item">
+                                    <span class="half-sea-legend-dot" style="background: #be9163;"></span>
+                                    <span>Pirogue Bajau &amp; Échelle</span>
+                                </div>
+                                <div class="half-sea-legend-item">
+                                    <span class="half-sea-legend-dot" style="background: #deb078;"></span>
+                                    <span>Persiennes papillon (&lt; &amp; &gt;)</span>
+                                </div>
+                                <div class="half-sea-legend-item">
+                                    <span class="half-sea-legend-dot" style="background: #4c2e19;"></span>
+                                    <span>Toiture bardeaux de bois</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="half-sea-text-image">
+                        <div class="half-sea-text-block">
+                            <span class="half-sea-label">04 / Climat Passif &amp; Matière</span>
+                            <h2>L'enveloppe respirante : ombres et brises marines</h2>
+                            <p>Dans un climat équatorial humide, l’architecture doit se faire filtre plutôt que
+                                barrière. Les parois extérieures sont intégralement composées de grands volets
+                                persiennés en bois articulés en accordéon, manœuvrables par les usagers selon
+                                l'ensoleillement et l'orientation des vents.</p>
+                            <p>En position ouverte ou semi-déployée, ces claustras brise-soleil projettent des trames
+                                d'ombres mouvantes sur les platelages tout en stimulant un tirage thermique naturel.
+                                L'air marin frais balaye en permanence les espaces habités, rendant superflue toute
+                                climatisation mécanique énergivore.</p>
+                            <p>La matérialité privilégie des essences de bois locales durables et imputrescibles, du
+                                bambou pour les éléments secondaires et des toitures ventilées inspirées de la tradition
+                                vernaculaire indonésienne.</p>
+                        </div>
+                        <div class="half-sea-image-block">
+                            <img src="images/half_above_the_sea_walkway.webp"
+                                alt="Passerelle intérieure en bois reliant les pavillons au-dessus de l'eau translucide"
+                                loading="lazy" decoding="async">
+                            <span class="half-sea-img-legend">Espace de déambulation — Fluidité des circulations
+                                au-dessus de l'océan</span>
+                        </div>
+                    </section>
+
+                    <!-- Grand panoramique immersif -->
+                    <section class="half-sea-panorama" aria-label="Vue panoramique HALF ABOVE THE SEA">
+                        <div class="half-sea-panorama-container">
+                            <img src="images/half_above_the_sea_cover.webp"
+                                alt="Perspective panoramique d'ensemble du projet HALF ABOVE THE SEA" loading="lazy"
+                                decoding="async">
+                            <div class="half-sea-panorama-caption">
+                                <strong>Atmosphère intérieure feutrée</strong> — Dialogue constant entre la lumière
+                                équatoriale filtrée et l'horizon infini du golfe de Tomini.
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================== -->
         <div id="project-pallet-3d" class="page-view" style="display: none;" data-model="models/Sofa 1.glb">
             <div class="project-detail-wrapper">
 
@@ -12041,25 +13066,30 @@
                                     <div class="pallet-cover-backdrop"></div>
                                     <div class="pallet-cover-content">
                                         <div class="pallet-cover-badge">
-                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M12 2l9 4.9v10.2L12 22l-9-4.9V6.9L12 2z"/>
-                                                <path d="M12 22V12"/>
-                                                <path d="M21 6.9l-9 5.1-9-5.1"/>
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2">
+                                                <path d="M12 2l9 4.9v10.2L12 22l-9-4.9V6.9L12 2z" />
+                                                <path d="M12 22V12" />
+                                                <path d="M21 6.9l-9 5.1-9-5.1" />
                                             </svg>
                                             <span>Visionneuse 3D Interactive</span>
                                         </div>
                                         <h3 class="pallet-cover-title">Explorer les Volumes en 3D</h3>
                                         <p class="pallet-cover-desc">
-                                            Manipulez les modèles en temps réel, examinez les assemblages et observez la matière à 360&deg;.
+                                            Manipulez les modèles en temps réel, examinez les assemblages et observez la
+                                            matière à 360&deg;.
                                         </p>
-                                        <button type="button" class="pallet-cover-launch-btn" onclick="launchPallet3DViewer()">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <polygon points="5 3 19 12 5 21 5 3"/>
+                                        <button type="button" class="pallet-cover-launch-btn"
+                                            onclick="launchPallet3DViewer()">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2">
+                                                <polygon points="5 3 19 12 5 21 5 3" />
                                             </svg>
                                             <span>Activer le visualiseur 3D</span>
                                         </button>
                                         <div class="pallet-cover-hint">
-                                            <span>Chargement interactif optimisé (modèles PBR &amp; ombres douces)</span>
+                                            <span>Chargement interactif optimisé (modèles PBR &amp; ombres
+                                                douces)</span>
                                         </div>
                                     </div>
                                 </div>

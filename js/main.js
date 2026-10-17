@@ -127,6 +127,12 @@ function showView(viewId, options = {}) {
         }
     }
 
+    if (viewId === 'project-half-above-the-sea') {
+        if (typeof initHalfSeaTideDiagram === 'function') {
+            initHalfSeaTideDiagram();
+        }
+    }
+
     // 9. MISE À JOUR SÉCURISÉE DE L'HISTORIQUE (protégée contre les restrictions file:// et webviews)
     const pushHistory = options.pushHistory !== false;
     const replaceHistory = options.replaceHistory === true;
@@ -453,3 +459,172 @@ if (document.readyState === 'loading') {
     setupContactForm();
 }
 
+
+
+/* ==========================================================================
+   MODULE INTERACTIF COMPACT : SCHÉMA COUPE TECHNIQUE DE MARÉE (HALF ABOVE THE SEA)
+   ========================================================================== */
+
+let halfSeaAnimInterval = null;
+let halfSeaAnimDirection = 1;
+
+function updateHalfSeaTide(val) {
+    const slider = document.getElementById('half-sea-tide-slider');
+    const valDisplay = document.getElementById('half-sea-tide-val');
+    const statusBadge = document.getElementById('half-sea-status-badge');
+    const waterRect = document.getElementById('half-sea-water-rect');
+    const waterSurface = document.getElementById('half-sea-water-surface');
+    const floatingStructure = document.getElementById('half-sea-floating-structure');
+    const floatingBoat = document.getElementById('half-sea-floating-boat');
+
+    if (!slider || !waterRect || !floatingStructure) return;
+
+    val = parseFloat(val);
+    if (valDisplay) valDisplay.textContent = Math.round(val) + '%';
+
+    // Bornes de marée en Y SVG (viewBox 0 0 960 430)
+    const WATER_Y_MIN = 345; // Basse mer (0%)
+    const WATER_Y_MAX = 225; // Pleine mer (100%)
+    const WATER_DELTA = WATER_Y_MIN - WATER_Y_MAX; // 120px d'amplitude (2.8m réels)
+
+    // 1. Niveau de l'eau
+    const waterY = WATER_Y_MIN - (val / 100) * WATER_DELTA;
+    waterRect.setAttribute('y', waterY);
+    waterRect.setAttribute('height', 430 - waterY);
+
+    if (waterSurface) {
+        const waveD = `M 0 ${waterY} Q 60 ${waterY - 2}, 120 ${waterY} T 240 ${waterY} T 360 ${waterY} T 480 ${waterY} T 600 ${waterY} T 720 ${waterY} T 840 ${waterY} T 960 ${waterY}`;
+        waterSurface.setAttribute('d', waveD);
+    }
+
+    // 2. Déplacement de la pirogue (flotte directement avec la surface de l'eau dès 0%)
+    if (floatingBoat) {
+        const boatDeltaY = - ((val / 100) * WATER_DELTA);
+        floatingBoat.style.transform = `translateY(${boatDeltaY}px)`;
+    }
+
+    // 3. Mouvement de la structure amphibie (pavillon)
+    // De 0% à 30% : posée sur pilotis de repos (deltaY = 0)
+    // Au-delà de 30% : flottaison active par poussée d'Archimède synchronisée avec la marée
+    if (val <= 30) {
+        floatingStructure.style.transform = 'translateY(0px)';
+        if (statusBadge) {
+            statusBadge.textContent = "Appui sur pilotis (BM)";
+            statusBadge.className = "half-sea-status-badge status-resting";
+        }
+    } else {
+        const riseRatio = (val - 30) / 70; // 0 à 1 entre 30% et 100%
+        const structureDeltaY = - (riseRatio * (WATER_DELTA * 0.70));
+        floatingStructure.style.transform = `translateY(${structureDeltaY}px)`;
+
+        if (statusBadge) {
+            const metersRise = ((val - 30) / 70 * 2.1).toFixed(2);
+            statusBadge.textContent = `Flottaison active (+${metersRise}m)`;
+            statusBadge.className = "half-sea-status-badge status-floating";
+        }
+    }
+}
+
+function setHalfSeaTide(val, btn) {
+    stopHalfSeaTideCycle();
+    const slider = document.getElementById('half-sea-tide-slider');
+    if (slider) slider.value = val;
+    updateHalfSeaTide(val);
+
+    document.querySelectorAll('.half-sea-btn-mini').forEach(b => {
+        if (b.id !== 'half-sea-play-cycle-btn') b.classList.remove('active');
+    });
+    if (btn) btn.classList.add('active');
+}
+
+function toggleHalfSeaTideCycle() {
+    const playBtn = document.getElementById('half-sea-play-cycle-btn');
+    const slider = document.getElementById('half-sea-tide-slider');
+    if (!slider) return;
+
+    if (halfSeaAnimInterval) {
+        stopHalfSeaTideCycle();
+    } else {
+        if (playBtn) {
+            playBtn.textContent = "⏸ Pause";
+            playBtn.classList.add('active');
+        }
+        halfSeaAnimInterval = setInterval(() => {
+            let current = parseFloat(slider.value);
+            current += halfSeaAnimDirection * 0.6;
+            if (current >= 100) {
+                current = 100;
+                halfSeaAnimDirection = -1;
+            } else if (current <= 0) {
+                current = 0;
+                halfSeaAnimDirection = 1;
+            }
+            slider.value = current;
+            updateHalfSeaTide(current);
+        }, 30);
+    }
+}
+
+function stopHalfSeaTideCycle() {
+    if (halfSeaAnimInterval) {
+        clearInterval(halfSeaAnimInterval);
+        halfSeaAnimInterval = null;
+    }
+    const playBtn = document.getElementById('half-sea-play-cycle-btn');
+    if (playBtn) {
+        playBtn.textContent = "▶ Cycle auto";
+        playBtn.classList.remove('active');
+    }
+}
+
+function initHalfSeaTideDiagram() {
+    const slider = document.getElementById('half-sea-tide-slider');
+    const wrapper = document.getElementById('half-sea-svg-wrapper');
+    const tooltip = document.getElementById('half-sea-diagram-tooltip');
+
+    if (slider) {
+        slider.addEventListener('input', (e) => {
+            stopHalfSeaTideCycle();
+            updateHalfSeaTide(e.target.value);
+            document.querySelectorAll('.half-sea-btn-mini').forEach(b => {
+                if (b.id !== 'half-sea-play-cycle-btn') b.classList.remove('active');
+            });
+        });
+    }
+
+    if (wrapper && tooltip) {
+        wrapper.querySelectorAll('.half-sea-interactive-part').forEach(part => {
+            part.addEventListener('mousemove', (e) => {
+                const tipText = part.getAttribute('data-tooltip');
+                if (!tipText) return;
+
+                const rect = wrapper.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                tooltip.innerHTML = tipText;
+                tooltip.style.left = x + 'px';
+                tooltip.style.top = y + 'px';
+                tooltip.style.opacity = '1';
+            });
+
+            part.addEventListener('mouseleave', () => {
+                tooltip.style.opacity = '0';
+            });
+        });
+    }
+
+    updateHalfSeaTide(0);
+}
+
+window.updateHalfSeaTide = updateHalfSeaTide;
+window.setHalfSeaTide = setHalfSeaTide;
+window.toggleHalfSeaTideCycle = toggleHalfSeaTideCycle;
+window.stopHalfSeaTideCycle = stopHalfSeaTideCycle;
+window.initHalfSeaTideDiagram = initHalfSeaTideDiagram;
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHalfSeaTideDiagram);
+} else {
+    initHalfSeaTideDiagram();
+}
